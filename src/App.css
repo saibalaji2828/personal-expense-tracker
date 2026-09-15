@@ -4369,3 +4369,793 @@ canvas {
     font-size: 16px !important;
   }
 }
+/* =====================================================
+   MONTHLY OVERVIEW BOX FIX
+   Matches the current App.jsx class names
+===================================================== */
+
+.monthly-overview-card .monthly-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+  width: 100% !important;
+  margin-top: 20px !important;
+}
+
+.monthly-overview-card .monthly-card {
+  width: 100% !important;
+  min-height: 125px !important;
+  padding: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+
+  border: 2px solid #334155 !important;
+  border-radius: 16px !important;
+  box-sizing: border-box !important;
+  background: #172033 !important;
+
+  overflow: hidden !important;
+}
+
+/* Icons */
+.monthly-overview-card .monthly-icon {
+  flex: 0 0 55px !important;
+  width: 55px !important;
+  height: 55px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 50% !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+}
+
+/* Text */
+.monthly-overview-card .monthly-content {
+  min-width: 0 !important;
+  flex: 1 !important;
+}
+
+.monthly-overview-card .monthly-content span {
+  display: block !important;
+  margin-bottom: 6px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+
+.monthly-overview-card .monthly-content strong {
+  display: block !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  word-break: break-word !important;
+}
+
+/* Income */
+.monthly-overview-card .monthly-income {
+  background: #0f2a1d !important;
+  border-color: #22c55e !important;
+}
+
+.monthly-overview-card .monthly-income .monthly-icon {
+  background: #14532d !important;
+  color: #4ade80 !important;
+}
+
+.monthly-overview-card .monthly-income strong {
+  color: #4ade80 !important;
+}
+
+/* Expenses */
+.monthly-overview-card .monthly-expenses {
+  background: #2a1519 !important;
+  border-color: #ef4444 !important;
+}
+
+.monthly-overview-card .monthly-expenses .monthly-icon {
+  background: #7f1d1d !important;
+  color: #f87171 !important;
+}
+
+.monthly-overview-card .monthly-expenses strong {
+  color: #f87171 !important;
+}
+
+/* Savings */
+.monthly-overview-card .monthly-savings {
+  background: #101f38 !important;
+  border-color: #3b82f6 !important;
+}
+
+.monthly-overview-card .monthly-savings .monthly-icon {
+  background: #1e3a8a !important;
+  color: #60a5fa !important;
+}
+
+.monthly-overview-card .monthly-savings strong {
+  color: #60a5fa !important;
+}
+
+/* Average Expense */
+.monthly-overview-card .monthly-average {
+  background: #211936 !important;
+  border-color: #8b5cf6 !important;
+}
+
+.monthly-overview-card .monthly-average .monthly-icon {
+  background: #4c1d95 !important;
+  color: #a78bfa !important;
+}
+
+.monthly-overview-card .monthly-average strong {
+  color: #a78bfa !important;
+}
+
+/* Savings Rate */
+.monthly-overview-card .monthly-rate {
+  background: #29220f !important;
+  border-color: #f59e0b !important;
+}
+
+.monthly-overview-card .monthly-rate .monthly-icon {
+  background: #78350f !important;
+  color: #fbbf24 !important;
+}
+
+.monthly-overview-card .monthly-rate strong {
+  color: #fbbf24 !important;
+}
+
+/* Highest Category */
+.monthly-overview-card .monthly-category {
+  background: #102525 !important;
+  border-color: #14b8a6 !important;
+}
+
+.monthly-overview-card .monthly-category .monthly-icon {
+  background: #134e4a !important;
+  color: #2dd4bf !important;
+}
+
+.monthly-overview-card .monthly-category strong {
+  color: #2dd4bf !important;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+  .monthly-overview-card .monthly-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .monthly-overview-card .monthly-card {
+    min-height: 105px !important;
+    padding: 16px !important;
+  }
+
+  .monthly-overview-card .monthly-icon {
+    flex-basis: 48px !important;
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 21px !important;
+  }
+
+  .monthly-overview-card .monthly-content span {
+    font-size: 14px !important;
+  }
+
+  .monthly-overview-card .monthly-content strong {
+    font-size: 20px !important;
+  }
+}
+/* =====================================================
+   FORCE MONTHLY OVERVIEW BOXES
+===================================================== */
+
+.monthly-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+  width: 100% !important;
+}
+
+.monthly-card {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+
+  width: 100% !important;
+  min-height: 125px !important;
+  padding: 20px !important;
+
+  box-sizing: border-box !important;
+
+  border: 2px solid #334155 !important;
+  border-radius: 16px !important;
+
+  background: #172033 !important;
+
+  overflow: hidden !important;
+}
+
+/* ICON */
+
+.monthly-icon {
+  flex-shrink: 0 !important;
+
+  width: 52px !important;
+  height: 52px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 50% !important;
+
+  font-size: 23px !important;
+}
+
+/* CONTENT */
+
+.monthly-content {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.monthly-content span {
+  display: block !important;
+
+  margin-bottom: 6px !important;
+
+  font-size: 14px !important;
+  font-weight: 600 !important;
+
+  color: #cbd5e1 !important;
+}
+
+.monthly-content strong {
+  display: block !important;
+
+  font-size: 22px !important;
+  font-weight: 800 !important;
+
+  color: white !important;
+}
+
+/* =====================================================
+   INCOME
+===================================================== */
+
+.monthly-income {
+  background: #0f2a1d !important;
+  border-color: #22c55e !important;
+}
+
+.monthly-income .monthly-icon {
+  background: #14532d !important;
+  color: #4ade80 !important;
+}
+
+.monthly-income strong {
+  color: #4ade80 !important;
+}
+
+/* =====================================================
+   EXPENSES
+===================================================== */
+
+.monthly-expenses {
+  background: #2a1519 !important;
+  border-color: #ef4444 !important;
+}
+
+.monthly-expenses .monthly-icon {
+  background: #7f1d1d !important;
+  color: #f87171 !important;
+}
+
+.monthly-expenses strong {
+  color: #f87171 !important;
+}
+
+/* =====================================================
+   SAVINGS
+===================================================== */
+
+.monthly-savings {
+  background: #101f38 !important;
+  border-color: #3b82f6 !important;
+}
+
+.monthly-savings .monthly-icon {
+  background: #1e3a8a !important;
+  color: #60a5fa !important;
+}
+
+.monthly-savings strong {
+  color: #60a5fa !important;
+}
+
+/* =====================================================
+   AVERAGE
+===================================================== */
+
+.monthly-average {
+  background: #211936 !important;
+  border-color: #8b5cf6 !important;
+}
+
+.monthly-average .monthly-icon {
+  background: #4c1d95 !important;
+  color: #a78bfa !important;
+}
+
+.monthly-average strong {
+  color: #a78bfa !important;
+}
+
+/* =====================================================
+   SAVINGS RATE
+===================================================== */
+
+.monthly-rate {
+  background: #29220f !important;
+  border-color: #f59e0b !important;
+}
+
+.monthly-rate .monthly-icon {
+  background: #78350f !important;
+  color: #fbbf24 !important;
+}
+
+.monthly-rate strong {
+  color: #fbbf24 !important;
+}
+
+/* =====================================================
+   HIGHEST CATEGORY
+===================================================== */
+
+.monthly-category {
+  background: #102525 !important;
+  border-color: #14b8a6 !important;
+}
+
+.monthly-category .monthly-icon {
+  background: #134e4a !important;
+  color: #2dd4bf !important;
+}
+
+.monthly-category strong {
+  color: #2dd4bf !important;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+  .monthly-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .monthly-card {
+    min-height: 100px !important;
+    padding: 16px !important;
+  }
+
+  .monthly-icon {
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 20px !important;
+  }
+
+  .monthly-content span {
+    font-size: 14px !important;
+  }
+
+  .monthly-content strong {
+    font-size: 20px !important;
+  }
+}
+/* =========================================================
+   NEW DASHBOARD CARD LAYOUT
+   ========================================================= */
+
+/* ---------- TOTAL SUMMARY ---------- */
+
+.summary-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 20px !important;
+  margin-bottom: 28px !important;
+}
+
+.summary-card {
+  min-height: 140px !important;
+  padding: 28px !important;
+  border-radius: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  border: 1px solid #334155 !important;
+  background: #111827 !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18) !important;
+}
+
+.summary-card h3 {
+  font-size: 20px !important;
+  margin: 0 0 12px !important;
+}
+
+.summary-card p {
+  font-size: 32px !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+}
+
+/* ---------- MONTHLY OVERVIEW ---------- */
+
+.monthly-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+}
+
+.monthly-card {
+  min-height: 145px !important;
+  padding: 24px !important;
+  border-radius: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 22px !important;
+  border: 2px solid !important;
+  overflow: hidden !important;
+}
+
+.monthly-icon {
+  width: 64px !important;
+  height: 64px !important;
+  min-width: 64px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 30px !important;
+}
+
+.monthly-content {
+  min-width: 0 !important;
+}
+
+.monthly-content span {
+  display: block !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  margin-bottom: 10px !important;
+  color: #94a3b8 !important;
+}
+
+.monthly-content strong {
+  display: block !important;
+  font-size: 29px !important;
+  font-weight: 800 !important;
+  color: #f8fafc !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Monthly Income */
+
+.monthly-income {
+  background: #062e1f !important;
+  border-color: #00d084 !important;
+}
+
+.monthly-income .monthly-icon {
+  background: #0b663f !important;
+}
+
+/* Monthly Expenses */
+
+.monthly-expenses {
+  background: #351217 !important;
+  border-color: #ff3038 !important;
+}
+
+.monthly-expenses .monthly-icon {
+  background: #8f2028 !important;
+}
+
+/* Monthly Savings */
+
+.monthly-savings {
+  background: #10284d !important;
+  border-color: #2583ff !important;
+}
+
+.monthly-savings .monthly-icon {
+  background: #174ca3 !important;
+}
+
+/* Average Expense */
+
+.monthly-average {
+  background: #21183c !important;
+  border-color: #914dff !important;
+}
+
+.monthly-average .monthly-icon {
+  background: #5221a0 !important;
+}
+
+/* Savings Rate */
+
+.monthly-rate {
+  background: #2c260d !important;
+  border-color: #ffae00 !important;
+}
+
+.monthly-rate .monthly-icon {
+  background: #824400 !important;
+}
+
+/* Highest Category */
+
+.monthly-category {
+  background: #082e2c !important;
+  border-color: #00d6cc !important;
+}
+
+.monthly-category .monthly-icon {
+  background: #075f59 !important;
+}
+
+/* ---------- MONTHLY BUDGET ---------- */
+
+.budget-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+}
+
+.budget-grid > div {
+  min-height: 180px !important;
+  padding: 28px !important;
+  border-radius: 18px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  border: 2px solid !important;
+}
+
+/* Budget = first box */
+
+.budget-grid > div:nth-child(1) {
+  background: #10284d !important;
+  border-color: #2676ff !important;
+}
+
+.budget-grid > div:nth-child(1) strong {
+  color: #5aa0ff !important;
+}
+
+/* Spent = second box */
+
+.budget-grid > div:nth-child(2) {
+  background: #351217 !important;
+  border-color: #e3294d !important;
+}
+
+.budget-grid > div:nth-child(2) strong {
+  color: #ff7189 !important;
+}
+
+/* Remaining = third box, full width */
+
+.budget-grid > div:nth-child(3) {
+  grid-column: 1 / -1 !important;
+  background: #073329 !important;
+  border-color: #00a978 !important;
+  min-height: 180px !important;
+}
+
+.budget-grid > div:nth-child(3) strong {
+  color: #35e58b !important;
+}
+
+.budget-grid span {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: #94a3b8 !important;
+  margin-bottom: 10px !important;
+}
+
+.budget-grid strong {
+  font-size: 34px !important;
+  font-weight: 800 !important;
+}
+
+/* ---------- BUDGET PROGRESS ---------- */
+
+.budget-progress {
+  height: 18px !important;
+  margin-top: 24px !important;
+  border-radius: 999px !important;
+  background: #334155 !important;
+}
+
+.budget-progress-bar {
+  height: 100% !important;
+  border-radius: 999px !important;
+  background: #3b82f6 !important;
+}
+
+.budget-percentage {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+/* ---------- BUDGET MESSAGE ---------- */
+
+.budget-message {
+  padding: 20px !important;
+  border-radius: 16px !important;
+  border: 1px solid #00a978 !important;
+  background: #073329 !important;
+  color: #35e58b !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 800px) {
+
+  .summary-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .monthly-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .budget-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .budget-grid > div:nth-child(3) {
+    grid-column: auto !important;
+  }
+
+  .summary-card {
+    min-height: 120px !important;
+  }
+
+  .monthly-card {
+    min-height: 130px !important;
+  }
+
+  .budget-grid > div {
+    min-height: 150px !important;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .summary-card {
+    padding: 20px !important;
+  }
+
+  .summary-card h3 {
+    font-size: 17px !important;
+  }
+
+  .summary-card p {
+    font-size: 27px !important;
+  }
+
+  .monthly-card {
+    padding: 18px !important;
+    gap: 15px !important;
+  }
+
+  .monthly-icon {
+    width: 55px !important;
+    height: 55px !important;
+    min-width: 55px !important;
+    font-size: 25px !important;
+  }
+
+  .monthly-content span {
+    font-size: 15px !important;
+  }
+
+  .monthly-content strong {
+    font-size: 24px !important;
+  }
+
+  .budget-grid > div {
+    padding: 22px !important;
+  }
+
+  .budget-grid strong {
+    font-size: 29px !important;
+  }
+}
+/* =========================================================
+   ADD TRANSACTION BUTTON - FINAL FIX
+   ========================================================= */
+
+.transaction-actions {
+  display: flex !important;
+  gap: 14px !important;
+  margin-top: 24px !important;
+  width: 100% !important;
+}
+
+.transaction-actions .primary-button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  width: 100% !important;
+  min-height: 52px !important;
+
+  padding: 14px 24px !important;
+
+  background: #2563eb !important;
+  color: #ffffff !important;
+
+  border: 2px solid #2563eb !important;
+  border-radius: 10px !important;
+
+  font-size: 16px !important;
+  font-weight: 700 !important;
+
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+
+  appearance: none !important;
+  -webkit-appearance: none !important;
+
+  transition: all 0.2s ease !important;
+}
+
+.transaction-actions .primary-button:hover {
+  background: #1d4ed8 !important;
+  border-color: #1d4ed8 !important;
+  transform: translateY(-1px);
+}
+
+.transaction-actions .primary-button:active {
+  transform: translateY(0);
+}
+
+.transaction-actions .cancel-button {
+  min-height: 52px !important;
+  padding: 14px 24px !important;
+  border-radius: 10px !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+/* Mobile */
+@media (max-width: 800px) {
+  .transaction-actions {
+    flex-direction: column !important;
+  }
+
+  .transaction-actions .primary-button,
+  .transaction-actions .cancel-button {
+    width: 100% !important;
+    min-height: 54px !important;
+  }
+}

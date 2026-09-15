@@ -33,16 +33,36 @@ const money = (value) =>
     maximumFractionDigits: 2,
   })}`;
 
-const todayString = () => new Date().toISOString().slice(0, 10);
-const currentMonth = () => new Date().toISOString().slice(0, 7);
+const todayString = () =>
+  new Date().toISOString().slice(0, 10);
+
+const currentMonth = () =>
+  new Date().toISOString().slice(0, 7);
+
+const escapeHtml = (value) =>
+  String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 
 function App() {
+  /* =========================
+     USER
+  ========================= */
+
   const [user, setUser] = useState(() => {
     try {
-      const saved = localStorage.getItem("expenseUser");
-      const logged = localStorage.getItem("isLoggedIn") === "true";
+      const savedUser =
+        localStorage.getItem("expenseUser");
 
-      return logged && saved ? JSON.parse(saved) : null;
+      const loggedIn =
+        localStorage.getItem("isLoggedIn") === "true";
+
+      return loggedIn && savedUser
+        ? JSON.parse(savedUser)
+        : null;
     } catch {
       return null;
     }
@@ -54,10 +74,18 @@ function App() {
       : "login"
   );
 
+  /* =========================
+     LOGIN
+  ========================= */
+
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
+
+  /* =========================
+     SIGNUP
+  ========================= */
 
   const [signupData, setSignupData] = useState({
     name: "",
@@ -69,25 +97,51 @@ function App() {
     password: "",
   });
 
+  /* =========================
+     TRANSACTIONS
+  ========================= */
+
   const [transactions, setTransactions] = useState(() => {
     try {
-      const saved = localStorage.getItem("transactions");
+      const saved =
+        localStorage.getItem("transactions");
+
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
     }
   });
 
+  /* =========================
+     BUDGET
+     STARTS AT ₹0
+  ========================= */
+
   const [monthlyBudget, setMonthlyBudget] = useState(() => {
     try {
-      const saved = localStorage.getItem("monthlyBudget");
-      return saved ? Number(saved) : 10000;
+      const saved =
+        localStorage.getItem("monthlyBudget");
+
+      if (
+        saved === null ||
+        saved === "" ||
+        Number(saved) <= 0
+      ) {
+        return 0;
+      }
+
+      return Number(saved);
     } catch {
-      return 10000;
+      return 0;
     }
   });
 
-  const [selectedMonth, setSelectedMonth] = useState(currentMonth());
+  const [selectedMonth, setSelectedMonth] =
+    useState(currentMonth());
+
+  /* =========================
+     TRANSACTION FORM
+  ========================= */
 
   const [form, setForm] = useState({
     description: "",
@@ -97,28 +151,49 @@ function App() {
     date: todayString(),
   });
 
-  const [editingId, setEditingId] = useState(null);
+  const [editingId, setEditingId] =
+    useState(null);
 
-  const [search, setSearch] = useState("");
-  const [filterType, setFilterType] = useState("all");
-  const [filterCategory, setFilterCategory] = useState("all");
+  /* =========================
+     FILTERS
+  ========================= */
+
+  const [search, setSearch] =
+    useState("");
+
+  const [filterType, setFilterType] =
+    useState("all");
+
+  const [filterCategory, setFilterCategory] =
+    useState("all");
+
+  /* =========================
+     THEME
+  ========================= */
 
   const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem("expenseTheme") === "dark";
+    return (
+      localStorage.getItem("expenseTheme") ===
+      "dark"
+    );
   });
 
-  // ==================================================
-  // SAVE TRANSACTIONS
-  // ==================================================
+  /* =========================
+     SAVE TRANSACTIONS
+  ========================= */
 
   const saveTransactions = (next) => {
     setTransactions(next);
-    localStorage.setItem("transactions", JSON.stringify(next));
+
+    localStorage.setItem(
+      "transactions",
+      JSON.stringify(next)
+    );
   };
 
-  // ==================================================
-  // LOGIN
-  // ==================================================
+  /* =========================
+     LOGIN
+  ========================= */
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -126,7 +201,8 @@ function App() {
     let storedUser = null;
 
     try {
-      const saved = localStorage.getItem("expenseUser");
+      const saved =
+        localStorage.getItem("expenseUser");
 
       if (saved) {
         storedUser = JSON.parse(saved);
@@ -136,18 +212,33 @@ function App() {
     }
 
     if (!storedUser) {
-      alert("No account found. Please create an account first.");
+      alert(
+        "No account found. Please create an account first."
+      );
       return;
     }
 
+    const enteredEmail =
+      loginData.email
+        .trim()
+        .toLowerCase();
+
+    const storedEmail =
+      String(storedUser.email)
+        .trim()
+        .toLowerCase();
+
     if (
-      loginData.email.trim().toLowerCase() ===
-        String(storedUser.email).trim().toLowerCase() &&
-      loginData.password === storedUser.password
+      enteredEmail === storedEmail &&
+      loginData.password ===
+        storedUser.password
     ) {
       setUser(storedUser);
 
-      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem(
+        "isLoggedIn",
+        "true"
+      );
 
       setPage("dashboard");
 
@@ -156,31 +247,41 @@ function App() {
         password: "",
       });
     } else {
-      alert("Invalid email or password.");
+      alert(
+        "Invalid email or password."
+      );
     }
   };
 
-  // ==================================================
-  // CREATE ACCOUNT
-  // ==================================================
+  /* =========================
+     SIGNUP
+  ========================= */
 
   const handleSignup = (e) => {
     e.preventDefault();
 
     if (!signupData.name.trim()) {
-      return alert("Please enter your name.");
+      alert("Please enter your name.");
+      return;
     }
 
     if (!signupData.email.trim()) {
-      return alert("Please enter your email.");
+      alert("Please enter your email.");
+      return;
     }
 
     if (!signupData.number.trim()) {
-      return alert("Please enter your phone number.");
+      alert(
+        "Please enter your phone number."
+      );
+      return;
     }
 
     if (!signupData.password.trim()) {
-      return alert("Please create a password.");
+      alert(
+        "Please create a password."
+      );
+      return;
     }
 
     const newUser = {
@@ -195,24 +296,30 @@ function App() {
       JSON.stringify(newUser)
     );
 
-    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem(
+      "isLoggedIn",
+      "true"
+    );
 
     setUser(newUser);
-
     setPage("dashboard");
 
-    alert("Account created successfully!");
+    alert(
+      "Account created successfully!"
+    );
   };
 
-  // ==================================================
-  // LOGOUT
-  // ==================================================
+  /* =========================
+     LOGOUT
+  ========================= */
 
   const handleLogout = () => {
-    localStorage.setItem("isLoggedIn", "false");
+    localStorage.setItem(
+      "isLoggedIn",
+      "false"
+    );
 
     setUser(null);
-
     setPage("login");
 
     setLoginData({
@@ -221,62 +328,84 @@ function App() {
     });
   };
 
-  // ==================================================
-  // FORM UPDATE
-  // ==================================================
+  /* =========================
+     FORM
+  ========================= */
 
   const updateForm = (key, value) => {
-    setForm((prev) => ({
-      ...prev,
+    setForm((previous) => ({
+      ...previous,
       [key]: value,
     }));
   };
 
-  // ==================================================
-  // ADD / UPDATE TRANSACTION
-  // ==================================================
+  /* =========================
+     ADD / UPDATE TRANSACTION
+  ========================= */
 
   const handleTransactionSubmit = (e) => {
     e.preventDefault();
 
     if (!form.description.trim()) {
-      return alert("Please enter a description.");
+      alert(
+        "Please enter a description."
+      );
+      return;
     }
 
-    if (!form.amount || Number(form.amount) <= 0) {
-      return alert("Please enter an amount greater than ₹0.");
+    if (
+      !form.amount ||
+      Number(form.amount) <= 0
+    ) {
+      alert(
+        "Please enter an amount greater than ₹0."
+      );
+      return;
     }
 
     if (!form.category) {
-      return alert("Please select a category.");
+      alert(
+        "Please select a category."
+      );
+      return;
     }
 
     if (!form.type) {
-      return alert("Please select Income or Expense.");
+      alert(
+        "Please select Income or Expense."
+      );
+      return;
     }
 
     if (!form.date) {
-      return alert("Please select a date.");
+      alert("Please select a date.");
+      return;
     }
 
     if (editingId !== null) {
-      const next = transactions.map((item) =>
-        item.id === editingId
-          ? {
-              ...item,
-              ...form,
-              amount: Number(form.amount),
-            }
-          : item
+      const updated =
+        transactions.map((transaction) =>
+          transaction.id === editingId
+            ? {
+                ...transaction,
+                ...form,
+                amount: Number(
+                  form.amount
+                ),
+              }
+            : transaction
+        );
+
+      saveTransactions(updated);
+
+      alert(
+        "Transaction updated successfully."
       );
-
-      saveTransactions(next);
-
-      alert("Transaction updated successfully.");
     } else {
-      const transaction = {
+      const newTransaction = {
         id: Date.now(),
-        description: form.description.trim(),
+        description:
+          form.description.trim(),
         amount: Number(form.amount),
         category: form.category,
         type: form.type,
@@ -285,10 +414,12 @@ function App() {
 
       saveTransactions([
         ...transactions,
-        transaction,
+        newTransaction,
       ]);
 
-      alert("Transaction added successfully.");
+      alert(
+        "Transaction added successfully."
+      );
     }
 
     setForm({
@@ -302,17 +433,21 @@ function App() {
     setEditingId(null);
   };
 
-  // ==================================================
-  // EDIT TRANSACTION
-  // ==================================================
+  /* =========================
+     EDIT
+  ========================= */
 
   const editTransaction = (transaction) => {
     setEditingId(transaction.id);
 
     setForm({
-      description: transaction.description,
-      amount: String(transaction.amount),
-      category: transaction.category,
+      description:
+        transaction.description,
+      amount: String(
+        transaction.amount
+      ),
+      category:
+        transaction.category,
       type: transaction.type,
       date: transaction.date,
     });
@@ -323,23 +458,30 @@ function App() {
     });
   };
 
-  // ==================================================
-  // DELETE TRANSACTION
-  // ==================================================
+  /* =========================
+     DELETE
+  ========================= */
 
   const deleteTransaction = (id) => {
-    if (!window.confirm("Delete this transaction?")) {
+    if (
+      !window.confirm(
+        "Delete this transaction?"
+      )
+    ) {
       return;
     }
 
     saveTransactions(
-      transactions.filter((item) => item.id !== id)
+      transactions.filter(
+        (transaction) =>
+          transaction.id !== id
+      )
     );
   };
 
-  // ==================================================
-  // CANCEL EDIT
-  // ==================================================
+  /* =========================
+     CANCEL EDIT
+  ========================= */
 
   const cancelEdit = () => {
     setEditingId(null);
@@ -353,16 +495,20 @@ function App() {
     });
   };
 
-  // ==================================================
-  // TOTALS
-  // ==================================================
+  /* =========================
+     TOTALS
+  ========================= */
 
   const totalIncome = useMemo(
     () =>
       transactions
-        .filter((item) => item.type === "income")
+        .filter(
+          (item) =>
+            item.type === "income"
+        )
         .reduce(
-          (sum, item) => sum + Number(item.amount),
+          (sum, item) =>
+            sum + Number(item.amount),
           0
         ),
     [transactions]
@@ -371,177 +517,237 @@ function App() {
   const totalExpenses = useMemo(
     () =>
       transactions
-        .filter((item) => item.type === "expense")
+        .filter(
+          (item) =>
+            item.type === "expense"
+        )
         .reduce(
-          (sum, item) => sum + Number(item.amount),
+          (sum, item) =>
+            sum + Number(item.amount),
           0
         ),
     [transactions]
   );
 
-  const balance = totalIncome - totalExpenses;
+  const balance =
+    totalIncome - totalExpenses;
 
-  // ==================================================
-  // MONTHLY DATA
-  // ==================================================
+  /* =========================
+     MONTHLY DATA
+  ========================= */
 
-  const monthlyTransactions = useMemo(
-    () =>
-      transactions.filter(
+  const monthlyTransactions =
+    useMemo(
+      () =>
+        transactions.filter(
+          (item) =>
+            item.date &&
+            item.date.startsWith(
+              selectedMonth
+            )
+        ),
+      [
+        transactions,
+        selectedMonth,
+      ]
+    );
+
+  const monthlyIncome =
+    monthlyTransactions
+      .filter(
         (item) =>
-          item.date &&
-          item.date.startsWith(selectedMonth)
-      ),
-    [transactions, selectedMonth]
-  );
+          item.type === "income"
+      )
+      .reduce(
+        (sum, item) =>
+          sum + Number(item.amount),
+        0
+      );
 
-  const monthlyIncome = monthlyTransactions
-    .filter((item) => item.type === "income")
-    .reduce(
-      (sum, item) => sum + Number(item.amount),
-      0
-    );
-
-  const monthlyExpenses = monthlyTransactions
-    .filter((item) => item.type === "expense")
-    .reduce(
-      (sum, item) => sum + Number(item.amount),
-      0
-    );
+  const monthlyExpenses =
+    monthlyTransactions
+      .filter(
+        (item) =>
+          item.type === "expense"
+      )
+      .reduce(
+        (sum, item) =>
+          sum + Number(item.amount),
+        0
+      );
 
   const monthlySavings =
     monthlyIncome - monthlyExpenses;
 
   const expenseCount =
     monthlyTransactions.filter(
-      (item) => item.type === "expense"
+      (item) =>
+        item.type === "expense"
     ).length;
 
   const averageExpense =
     expenseCount > 0
-      ? monthlyExpenses / expenseCount
+      ? monthlyExpenses /
+        expenseCount
       : 0;
 
   const savingsRate =
     monthlyIncome > 0
-      ? (monthlySavings / monthlyIncome) * 100
+      ? (monthlySavings /
+          monthlyIncome) *
+        100
       : 0;
 
-  // ==================================================
-  // CATEGORY TOTALS
-  // ==================================================
+  /* =========================
+     CATEGORY DATA
+  ========================= */
 
-  const categoryTotals = useMemo(() => {
-    const totals = {};
+  const categoryTotals =
+    useMemo(() => {
+      const totals = {};
 
-    CATEGORIES.forEach(
-      (category) => (totals[category] = 0)
-    );
-
-    monthlyTransactions
-      .filter((item) => item.type === "expense")
-      .forEach((item) => {
-        totals[item.category] =
-          (totals[item.category] || 0) +
-          Number(item.amount);
-      });
-
-    return totals;
-  }, [monthlyTransactions]);
-
-  // ==================================================
-  // HIGHEST CATEGORY
-  // ==================================================
-
-  const highestCategory = useMemo(() => {
-    let best = "No expenses yet";
-    let bestAmount = 0;
-
-    Object.entries(categoryTotals).forEach(
-      ([category, amount]) => {
-        if (amount > bestAmount) {
-          best = category;
-          bestAmount = amount;
+      CATEGORIES.forEach(
+        (category) => {
+          totals[category] = 0;
         }
-      }
-    );
+      );
 
-    return best === "No expenses yet"
-      ? best
-      : `${best} - ${money(bestAmount)}`;
-  }, [categoryTotals]);
+      monthlyTransactions
+        .filter(
+          (item) =>
+            item.type ===
+            "expense"
+        )
+        .forEach((item) => {
+          totals[item.category] =
+            (totals[item.category] ||
+              0) +
+            Number(item.amount);
+        });
 
-  // ==================================================
-  // BUDGET
-  // ==================================================
+      return totals;
+    }, [monthlyTransactions]);
+
+  const highestCategory =
+    useMemo(() => {
+      let best =
+        "No expenses yet";
+
+      let bestAmount = 0;
+
+      Object.entries(
+        categoryTotals
+      ).forEach(
+        ([category, amount]) => {
+          if (
+            amount > bestAmount
+          ) {
+            best = category;
+            bestAmount = amount;
+          }
+        }
+      );
+
+      return best ===
+        "No expenses yet"
+        ? best
+        : `${best} - ${money(
+            bestAmount
+          )}`;
+    }, [categoryTotals]);
+
+  /* =========================
+     BUDGET
+  ========================= */
 
   const budgetRemaining =
-    monthlyBudget - monthlyExpenses;
+    monthlyBudget -
+    monthlyExpenses;
 
   const budgetPercentage =
     monthlyBudget > 0
-      ? (monthlyExpenses / monthlyBudget) * 100
+      ? (monthlyExpenses /
+          monthlyBudget) *
+        100
       : 0;
 
-  const displayBudgetPercentage = Math.min(
-    budgetPercentage,
-    100
-  );
+  const displayBudgetPercentage =
+    Math.min(
+      Math.max(
+        budgetPercentage,
+        0
+      ),
+      100
+    );
 
-  // ==================================================
-  // FILTERED TRANSACTIONS
-  // ==================================================
+  /* =========================
+     FILTER
+  ========================= */
 
-  const filteredTransactions = useMemo(() => {
-    const searchText =
-      search.toLowerCase().trim();
+  const filteredTransactions =
+    useMemo(() => {
+      const text =
+        search
+          .toLowerCase()
+          .trim();
 
-    return [...transactions]
-      .filter((item) => {
-        const matchesSearch =
-          !searchText ||
-          String(item.description)
-            .toLowerCase()
-            .includes(searchText);
+      return [...transactions]
+        .filter((item) => {
+          const matchesSearch =
+            !text ||
+            String(
+              item.description
+            )
+              .toLowerCase()
+              .includes(text);
 
-        const matchesType =
-          filterType === "all" ||
-          item.type === filterType;
+          const matchesType =
+            filterType === "all" ||
+            item.type ===
+              filterType;
 
-        const matchesCategory =
-          filterCategory === "all" ||
-          item.category === filterCategory;
+          const matchesCategory =
+            filterCategory ===
+              "all" ||
+            item.category ===
+              filterCategory;
 
-        return (
-          matchesSearch &&
-          matchesType &&
-          matchesCategory
+          return (
+            matchesSearch &&
+            matchesType &&
+            matchesCategory
+          );
+        })
+        .sort(
+          (a, b) =>
+            new Date(b.date) -
+            new Date(a.date)
         );
-      })
-      .sort(
-        (a, b) =>
-          new Date(b.date) -
-          new Date(a.date)
+    }, [
+      transactions,
+      search,
+      filterType,
+      filterCategory,
+    ]);
+
+  /* =========================
+     CHART DATA
+  ========================= */
+
+  const categoryChartData =
+    Object.entries(
+      categoryTotals
+    )
+      .filter(
+        ([, amount]) =>
+          amount > 0
+      )
+      .map(
+        ([name, amount]) => ({
+          name,
+          amount,
+        })
       );
-  }, [
-    transactions,
-    search,
-    filterType,
-    filterCategory,
-  ]);
-
-  // ==================================================
-  // CHART DATA
-  // ==================================================
-
-  const categoryChartData = Object.entries(
-    categoryTotals
-  )
-    .filter(([, amount]) => amount > 0)
-    .map(([name, amount]) => ({
-      name,
-      amount,
-    }));
 
   const incomeExpenseData = [
     {
@@ -557,29 +763,38 @@ function App() {
   const trendMap = {};
 
   monthlyTransactions
-    .filter((item) => item.type === "expense")
+    .filter(
+      (item) =>
+        item.type === "expense"
+    )
     .forEach((item) => {
       trendMap[item.date] =
-        (trendMap[item.date] || 0) +
+        (trendMap[item.date] ||
+          0) +
         Number(item.amount);
     });
 
-  const trendData = Object.entries(trendMap)
-    .sort(
-      ([a], [b]) =>
-        new Date(a) - new Date(b)
-    )
-    .map(([date, amount]) => ({
-      date: date.slice(5),
-      amount,
-    }));
+  const trendData =
+    Object.entries(trendMap)
+      .sort(
+        ([a], [b]) =>
+          new Date(a) -
+          new Date(b)
+      )
+      .map(
+        ([date, amount]) => ({
+          date: date.slice(5),
+          amount,
+        })
+      );
 
-  // ==================================================
-  // THEME
-  // ==================================================
+  /* =========================
+     THEME
+  ========================= */
 
   const toggleTheme = () => {
-    const next = !darkMode;
+    const next =
+      !darkMode;
 
     setDarkMode(next);
 
@@ -589,17 +804,21 @@ function App() {
     );
   };
 
-  // ==================================================
-  // DOWNLOAD BILL
-  // ==================================================
+  /* =========================
+     DOWNLOAD BILL
+  ========================= */
 
-  const downloadBill = (transaction) => {
+  const downloadBill = (
+    transaction
+  ) => {
     const typeText =
-      transaction.type === "income"
+      transaction.type ===
+      "income"
         ? "Income"
         : "Expense";
 
-    const html = `<!DOCTYPE html>
+    const html = `
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -624,7 +843,6 @@ body {
 
 h1 {
   text-align: center;
-  margin-bottom: 5px;
 }
 
 .sub {
@@ -645,7 +863,6 @@ h1 {
   text-align: center;
   color: #6b7280;
   margin-top: 30px;
-  font-size: 13px;
 }
 </style>
 
@@ -655,7 +872,9 @@ h1 {
 
 <div class="bill">
 
-<h1>Personal Expense Tracker</h1>
+<h1>
+Personal Expense Tracker
+</h1>
 
 <div class="sub">
 Transaction Bill
@@ -663,33 +882,43 @@ Transaction Bill
 
 <div class="row">
 <strong>Description</strong>
-<span>${escapeHtml(
+<span>
+${escapeHtml(
   transaction.description
-)}</span>
+)}
+</span>
 </div>
 
 <div class="row">
 <strong>Amount</strong>
-<span>${money(
+<span>
+${money(
   transaction.amount
-)}</span>
+)}
+</span>
 </div>
 
 <div class="row">
 <strong>Category</strong>
-<span>${escapeHtml(
+<span>
+${escapeHtml(
   transaction.category
-)}</span>
+)}
+</span>
 </div>
 
 <div class="row">
 <strong>Type</strong>
-<span>${typeText}</span>
+<span>
+${typeText}
+</span>
 </div>
 
 <div class="row">
 <strong>Date</strong>
-<span>${transaction.date}</span>
+<span>
+${transaction.date}
+</span>
 </div>
 
 <div class="footer">
@@ -699,18 +928,26 @@ Generated by Personal Expense Tracker
 </div>
 
 </body>
-</html>`;
+</html>
+`;
 
-    const blob = new Blob(
-      [html],
-      { type: "text/html" }
-    );
+    const blob =
+      new Blob(
+        [html],
+        {
+          type: "text/html",
+        }
+      );
 
     const url =
-      URL.createObjectURL(blob);
+      URL.createObjectURL(
+        blob
+      );
 
     const link =
-      document.createElement("a");
+      document.createElement(
+        "a"
+      );
 
     link.href = url;
 
@@ -719,25 +956,14 @@ Generated by Personal Expense Tracker
 
     link.click();
 
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(
+      url
+    );
   };
 
-  // ==================================================
-  // ESCAPE HTML
-  // ==================================================
-
-  function escapeHtml(value) {
-    return String(value ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
-
-  // ==================================================
-  // LOGIN PAGE
-  // ==================================================
+  /* =====================================================
+     LOGIN PAGE
+  ===================================================== */
 
   if (page === "login") {
     return (
@@ -759,8 +985,6 @@ Generated by Personal Expense Tracker
 
           <form onSubmit={handleLogin}>
 
-            {/* EMAIL */}
-
             <div className="form-field">
 
               <label>
@@ -770,19 +994,20 @@ Generated by Personal Expense Tracker
               <input
                 type="email"
                 placeholder="Enter your email"
-                value={loginData.email}
+                value={
+                  loginData.email
+                }
                 onChange={(e) =>
                   setLoginData({
                     ...loginData,
-                    email: e.target.value,
+                    email:
+                      e.target.value,
                   })
                 }
                 required
               />
 
             </div>
-
-            {/* PASSWORD */}
 
             <div className="form-field">
 
@@ -793,11 +1018,14 @@ Generated by Personal Expense Tracker
               <input
                 type="password"
                 placeholder="Enter your password"
-                value={loginData.password}
+                value={
+                  loginData.password
+                }
                 onChange={(e) =>
                   setLoginData({
                     ...loginData,
-                    password: e.target.value,
+                    password:
+                      e.target.value,
                   })
                 }
                 required
@@ -805,25 +1033,72 @@ Generated by Personal Expense Tracker
 
             </div>
 
-            {/* =====================================
-                SIGN IN + CREATE ACCOUNT BOXES
-            ====================================== */}
-
-            <div className="auth-options">
+            <div
+              className="auth-options"
+              style={{
+                display:
+                  "flex",
+                flexDirection:
+                  "row",
+                gap: "15px",
+                width:
+                  "100%",
+                marginTop:
+                  "25px",
+              }}
+            >
 
               <button
                 type="submit"
-                className="auth-option-btn signin-option"
+                style={{
+                  flex: "1",
+                  padding:
+                    "14px 10px",
+                  borderRadius:
+                    "10px",
+                  fontSize:
+                    "16px",
+                  fontWeight:
+                    "700",
+                  cursor:
+                    "pointer",
+                  background:
+                    "#2563eb",
+                  color:
+                    "#ffffff",
+                  border:
+                    "2px solid #2563eb",
+                }}
               >
                 🔐 Sign In
               </button>
 
               <button
                 type="button"
-                className="auth-option-btn signup-option"
-                onClick={() => {
-                  setPage("signup");
+                style={{
+                  flex: "1",
+                  padding:
+                    "14px 10px",
+                  borderRadius:
+                    "10px",
+                  fontSize:
+                    "16px",
+                  fontWeight:
+                    "700",
+                  cursor:
+                    "pointer",
+                  background:
+                    "#eef4ff",
+                  color:
+                    "#2563eb",
+                  border:
+                    "2px solid #2563eb",
                 }}
+                onClick={() =>
+                  setPage(
+                    "signup"
+                  )
+                }
               >
                 👤 Create Account
               </button>
@@ -838,16 +1113,22 @@ Generated by Personal Expense Tracker
     );
   }
 
-  // ==================================================
-  // SIGNUP PAGE
-  // ==================================================
+  /* =====================================================
+     SIGNUP PAGE
+  ===================================================== */
 
   if (page === "signup") {
-    const setSignup = (key, value) =>
-      setSignupData((prev) => ({
-        ...prev,
-        [key]: value,
-      }));
+    const setSignup = (
+      key,
+      value
+    ) => {
+      setSignupData(
+        (previous) => ({
+          ...previous,
+          [key]: value,
+        })
+      );
+    };
 
     return (
       <div className="auth-page">
@@ -870,10 +1151,7 @@ Generated by Personal Expense Tracker
 
             <div className="form-grid">
 
-              {/* NAME */}
-
               <div className="form-field">
-
                 <label>
                   Name *
                 </label>
@@ -881,7 +1159,9 @@ Generated by Personal Expense Tracker
                 <input
                   type="text"
                   placeholder="Enter your name"
-                  value={signupData.name}
+                  value={
+                    signupData.name
+                  }
                   onChange={(e) =>
                     setSignup(
                       "name",
@@ -890,19 +1170,17 @@ Generated by Personal Expense Tracker
                   }
                   required
                 />
-
               </div>
 
-              {/* GENDER */}
-
               <div className="form-field">
-
                 <label>
                   Gender
                 </label>
 
                 <select
-                  value={signupData.gender}
+                  value={
+                    signupData.gender
+                  }
                   onChange={(e) =>
                     setSignup(
                       "gender",
@@ -913,26 +1191,19 @@ Generated by Personal Expense Tracker
                   <option value="">
                     Select gender
                   </option>
-
-                  <option>
+                  <option value="Male">
                     Male
                   </option>
-
-                  <option>
+                  <option value="Female">
                     Female
                   </option>
-
-                  <option>
+                  <option value="Other">
                     Other
                   </option>
                 </select>
-
               </div>
 
-              {/* AGE */}
-
               <div className="form-field">
-
                 <label>
                   Age
                 </label>
@@ -942,7 +1213,9 @@ Generated by Personal Expense Tracker
                   min="1"
                   max="120"
                   placeholder="Enter your age"
-                  value={signupData.age}
+                  value={
+                    signupData.age
+                  }
                   onChange={(e) =>
                     setSignup(
                       "age",
@@ -950,19 +1223,17 @@ Generated by Personal Expense Tracker
                     )
                   }
                 />
-
               </div>
 
-              {/* OCCUPATION */}
-
               <div className="form-field">
-
                 <label>
                   Occupation
                 </label>
 
                 <select
-                  value={signupData.occupation}
+                  value={
+                    signupData.occupation
+                  }
                   onChange={(e) =>
                     setSignup(
                       "occupation",
@@ -970,51 +1241,37 @@ Generated by Personal Expense Tracker
                     )
                   }
                 >
-
                   <option value="">
                     Select occupation
                   </option>
-
-                  <option>
+                  <option value="Student">
                     Student
                   </option>
-
-                  <option>
+                  <option value="Employee">
                     Employee
                   </option>
-
-                  <option>
+                  <option value="Business">
                     Business
                   </option>
-
-                  <option>
+                  <option value="Freelancer">
                     Freelancer
                   </option>
-
-                  <option>
+                  <option value="Teacher">
                     Teacher
                   </option>
-
-                  <option>
+                  <option value="Doctor">
                     Doctor
                   </option>
-
-                  <option>
+                  <option value="Engineer">
                     Engineer
                   </option>
-
-                  <option>
+                  <option value="Other">
                     Other
                   </option>
-
                 </select>
-
               </div>
 
-              {/* EMAIL */}
-
               <div className="form-field">
-
                 <label>
                   Email *
                 </label>
@@ -1022,7 +1279,9 @@ Generated by Personal Expense Tracker
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  value={signupData.email}
+                  value={
+                    signupData.email
+                  }
                   onChange={(e) =>
                     setSignup(
                       "email",
@@ -1031,13 +1290,9 @@ Generated by Personal Expense Tracker
                   }
                   required
                 />
-
               </div>
 
-              {/* PHONE */}
-
               <div className="form-field">
-
                 <label>
                   Phone Number *
                 </label>
@@ -1045,7 +1300,9 @@ Generated by Personal Expense Tracker
                 <input
                   type="tel"
                   placeholder="Enter 10-digit phone number"
-                  value={signupData.number}
+                  value={
+                    signupData.number
+                  }
                   onChange={(e) =>
                     setSignup(
                       "number",
@@ -1054,13 +1311,9 @@ Generated by Personal Expense Tracker
                   }
                   required
                 />
-
               </div>
 
-              {/* PASSWORD */}
-
               <div className="form-field full-width">
-
                 <label>
                   Password *
                 </label>
@@ -1068,7 +1321,9 @@ Generated by Personal Expense Tracker
                 <input
                   type="password"
                   placeholder="Create a password"
-                  value={signupData.password}
+                  value={
+                    signupData.password
+                  }
                   onChange={(e) =>
                     setSignup(
                       "password",
@@ -1077,41 +1332,83 @@ Generated by Personal Expense Tracker
                   }
                   required
                 />
-
               </div>
 
             </div>
 
-            {/* CREATE ACCOUNT */}
-
-            <button
-              type="submit"
-              className="primary-btn"
-            >
-              👤 Create Account →
-            </button>
-
-          </form>
-
-          {/* SIGN IN */}
-
-          <div className="signup-signin-area">
-
-            <div className="signup-signin-text">
-              Already have an account?
-            </div>
-
-            <button
-              type="button"
-              className="signup-login-button"
-              onClick={() => {
-                setPage("login");
+            <div
+              style={{
+                display:
+                  "flex",
+                gap:
+                  "15px",
+                width:
+                  "100%",
+                marginTop:
+                  "25px",
               }}
             >
-              🔐 Sign In
-            </button>
 
-          </div>
+              <button
+                type="submit"
+                style={{
+                  flex:
+                    "1",
+                  padding:
+                    "14px 10px",
+                  borderRadius:
+                    "10px",
+                  fontSize:
+                    "16px",
+                  fontWeight:
+                    "700",
+                  cursor:
+                    "pointer",
+                  background:
+                    "#2563eb",
+                  color:
+                    "#ffffff",
+                  border:
+                    "2px solid #2563eb",
+                }}
+              >
+                👤 Create Account
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setPage(
+                    "login"
+                  )
+                }
+                style={{
+                  flex:
+                    "1",
+                  padding:
+                    "14px 10px",
+                  borderRadius:
+                    "10px",
+                  fontSize:
+                    "16px",
+                  fontWeight:
+                    "700",
+                  cursor:
+                    "pointer",
+                  background:
+                    "#eef4ff",
+                  color:
+                    "#2563eb",
+                  border:
+                    "2px solid #2563eb",
+                }}
+              >
+                🔐 Sign In
+              </button>
+
+            </div>
+
+          </form>
 
         </div>
 
@@ -1119,15 +1416,17 @@ Generated by Personal Expense Tracker
     );
   }
 
-  // ==================================================
-  // PROFILE PAGE
-  // ==================================================
+  /* =====================================================
+     PROFILE
+  ===================================================== */
 
   if (page === "profile") {
     return (
       <div
         className={`dashboard ${
-          darkMode ? "dark-mode" : ""
+          darkMode
+            ? "dark-mode"
+            : ""
         }`}
       >
 
@@ -1148,10 +1447,14 @@ Generated by Personal Expense Tracker
           <button
             className="profile-btn"
             onClick={() =>
-              setPage("dashboard")
+              setPage(
+                "dashboard"
+              )
             }
           >
-            👤 {user?.name}
+            👤{" "}
+            {user?.name ||
+              "Profile"}
           </button>
 
         </header>
@@ -1244,7 +1547,9 @@ Generated by Personal Expense Tracker
 
             <button
               className="logout-btn"
-              onClick={handleLogout}
+              onClick={
+                handleLogout
+              }
             >
               🚪 Logout
             </button>
@@ -1252,7 +1557,9 @@ Generated by Personal Expense Tracker
             <button
               className="back-dashboard-btn"
               onClick={() =>
-                setPage("dashboard")
+                setPage(
+                  "dashboard"
+                )
               }
             >
               ← Back to Dashboard
@@ -1266,14 +1573,16 @@ Generated by Personal Expense Tracker
     );
   }
 
-  // ==================================================
-  // DASHBOARD
-  // ==================================================
+  /* =====================================================
+     DASHBOARD
+  ===================================================== */
 
   return (
     <div
       className={`dashboard ${
-        darkMode ? "dark-mode" : ""
+        darkMode
+          ? "dark-mode"
+          : ""
       }`}
     >
 
@@ -1295,7 +1604,9 @@ Generated by Personal Expense Tracker
 
           <button
             className="theme-toggle"
-            onClick={toggleTheme}
+            onClick={
+              toggleTheme
+            }
           >
             {darkMode
               ? "☀️ Light Mode"
@@ -1305,10 +1616,14 @@ Generated by Personal Expense Tracker
           <button
             className="profile-btn"
             onClick={() =>
-              setPage("profile")
+              setPage(
+                "profile"
+              )
             }
           >
-            👤 {user?.name || "Profile"}
+            👤{" "}
+            {user?.name ||
+              "Profile"}
           </button>
 
         </div>
@@ -1320,12 +1635,15 @@ Generated by Personal Expense Tracker
         id="reportArea"
       >
 
-        {/* WELCOME */}
+        {/* =========================
+            WELCOME
+        ========================= */}
 
         <div className="welcome-card">
 
           <h2>
-            Welcome, {user?.name}! 👋
+            Welcome,{" "}
+            {user?.name}! 👋
           </h2>
 
           <p>
@@ -1336,43 +1654,149 @@ Generated by Personal Expense Tracker
 
         </div>
 
-        {/* SUMMARY */}
+        {/* =========================
+            TOTAL SUMMARY
+            ONE BELOW ANOTHER
+        ========================= */}
 
-        <section className="summary-grid">
+        <section
+          className="summary-grid"
+          style={{
+            display:
+              "grid",
+            gridTemplateColumns:
+              "1fr",
+            gap:
+              "20px",
+            marginBottom:
+              "28px",
+          }}
+        >
 
-          <div className="summary-card">
+          <div
+            style={{
+              minHeight:
+                "140px",
+              padding:
+                "28px",
+              borderRadius:
+                "18px",
+              border:
+                "2px solid #334155",
+              background:
+                "#111827",
+              boxSizing:
+                "border-box",
+            }}
+          >
+
             <h3>
               Total Balance
             </h3>
 
-            <p>
+            <p
+              style={{
+                fontSize:
+                  "32px",
+                fontWeight:
+                  "800",
+                margin:
+                  "10px 0 0",
+                color:
+                  "#ffffff",
+              }}
+            >
               {money(balance)}
             </p>
+
           </div>
 
-          <div className="summary-card">
+          <div
+            style={{
+              minHeight:
+                "140px",
+              padding:
+                "28px",
+              borderRadius:
+                "18px",
+              border:
+                "2px solid #334155",
+              background:
+                "#111827",
+              boxSizing:
+                "border-box",
+            }}
+          >
+
             <h3>
               Total Income
             </h3>
 
-            <p>
-              {money(totalIncome)}
+            <p
+              style={{
+                fontSize:
+                  "32px",
+                fontWeight:
+                  "800",
+                margin:
+                  "10px 0 0",
+                color:
+                  "#ffffff",
+              }}
+            >
+              {money(
+                totalIncome
+              )}
             </p>
+
           </div>
 
-          <div className="summary-card">
+          <div
+            style={{
+              minHeight:
+                "140px",
+              padding:
+                "28px",
+              borderRadius:
+                "18px",
+              border:
+                "2px solid #334155",
+              background:
+                "#111827",
+              boxSizing:
+                "border-box",
+            }}
+          >
+
             <h3>
               Total Expenses
             </h3>
 
-            <p>
-              {money(totalExpenses)}
+            <p
+              style={{
+                fontSize:
+                  "32px",
+                fontWeight:
+                  "800",
+                margin:
+                  "10px 0 0",
+                color:
+                  "#ffffff",
+              }}
+            >
+              {money(
+                totalExpenses
+              )}
             </p>
+
           </div>
 
         </section>
 
-        {/* MONTHLY OVERVIEW */}
+        {/* =========================
+            MONTHLY OVERVIEW
+            2 COLUMNS
+        ========================= */}
 
         <section className="card">
 
@@ -1384,7 +1808,9 @@ Generated by Personal Expense Tracker
 
             <input
               type="month"
-              value={selectedMonth}
+              value={
+                selectedMonth
+              }
               onChange={(e) =>
                 setSelectedMonth(
                   e.target.value
@@ -1394,80 +1820,542 @@ Generated by Personal Expense Tracker
 
           </div>
 
-          <div className="monthly-grid">
+          <div
+            style={{
+              display:
+                "grid",
+              gridTemplateColumns:
+                "repeat(2, minmax(0, 1fr))",
+              gap:
+                "18px",
+            }}
+          >
 
-            <div>
-              <span>
-                Monthly Income
-              </span>
+            {/* MONTHLY INCOME */}
 
-              <strong>
-                {money(monthlyIncome)}
-              </strong>
+            <div
+              style={{
+                minHeight:
+                  "145px",
+                padding:
+                  "24px",
+                borderRadius:
+                  "18px",
+                border:
+                  "2px solid #00d084",
+                background:
+                  "#062e1f",
+                display:
+                  "flex",
+                alignItems:
+                  "center",
+                gap:
+                  "20px",
+                boxSizing:
+                  "border-box",
+              }}
+            >
+
+              <div
+                style={{
+                  width:
+                    "64px",
+                  height:
+                    "64px",
+                  minWidth:
+                    "64px",
+                  borderRadius:
+                    "50%",
+                  background:
+                    "#0b663f",
+                  display:
+                    "flex",
+                  alignItems:
+                    "center",
+                  justifyContent:
+                    "center",
+                  fontSize:
+                    "30px",
+                }}
+              >
+                📈
+              </div>
+
+              <div>
+                <span
+                  style={{
+                    display:
+                      "block",
+                    color:
+                      "#94a3b8",
+                    fontSize:
+                      "18px",
+                    fontWeight:
+                      "700",
+                    marginBottom:
+                      "10px",
+                  }}
+                >
+                  Monthly Income
+                </span>
+
+                <strong
+                  style={{
+                    color:
+                      "#ffffff",
+                    fontSize:
+                      "29px",
+                  }}
+                >
+                  {money(
+                    monthlyIncome
+                  )}
+                </strong>
+              </div>
+
             </div>
 
-            <div>
-              <span>
-                Monthly Expenses
-              </span>
+            {/* MONTHLY EXPENSES */}
 
-              <strong>
-                {money(monthlyExpenses)}
-              </strong>
+            <div
+              style={{
+                minHeight:
+                  "145px",
+                padding:
+                  "24px",
+                borderRadius:
+                  "18px",
+                border:
+                  "2px solid #ff3038",
+                background:
+                  "#351217",
+                display:
+                  "flex",
+                alignItems:
+                  "center",
+                gap:
+                  "20px",
+                boxSizing:
+                  "border-box",
+              }}
+            >
+
+              <div
+                style={{
+                  width:
+                    "64px",
+                  height:
+                    "64px",
+                  minWidth:
+                    "64px",
+                  borderRadius:
+                    "50%",
+                  background:
+                    "#8f2028",
+                  display:
+                    "flex",
+                  alignItems:
+                    "center",
+                  justifyContent:
+                    "center",
+                  fontSize:
+                    "30px",
+                }}
+              >
+                📉
+              </div>
+
+              <div>
+                <span
+                  style={{
+                    display:
+                      "block",
+                    color:
+                      "#94a3b8",
+                    fontSize:
+                      "18px",
+                    fontWeight:
+                      "700",
+                    marginBottom:
+                      "10px",
+                  }}
+                >
+                  Monthly Expenses
+                </span>
+
+                <strong
+                  style={{
+                    color:
+                      "#ffffff",
+                    fontSize:
+                      "29px",
+                  }}
+                >
+                  {money(
+                    monthlyExpenses
+                  )}
+                </strong>
+              </div>
+
             </div>
 
-            <div>
-              <span>
-                Monthly Savings
-              </span>
+            {/* SAVINGS */}
 
-              <strong>
-                {money(monthlySavings)}
-              </strong>
+            <div
+              style={{
+                minHeight:
+                  "145px",
+                padding:
+                  "24px",
+                borderRadius:
+                  "18px",
+                border:
+                  "2px solid #2583ff",
+                background:
+                  "#10284d",
+                display:
+                  "flex",
+                alignItems:
+                  "center",
+                gap:
+                  "20px",
+                boxSizing:
+                  "border-box",
+              }}
+            >
+
+              <div
+                style={{
+                  width:
+                    "64px",
+                  height:
+                    "64px",
+                  minWidth:
+                    "64px",
+                  borderRadius:
+                    "50%",
+                  background:
+                    "#174ca3",
+                  display:
+                    "flex",
+                  alignItems:
+                    "center",
+                  justifyContent:
+                    "center",
+                  fontSize:
+                    "30px",
+                }}
+              >
+                🐷
+              </div>
+
+              <div>
+                <span
+                  style={{
+                    display:
+                      "block",
+                    color:
+                      "#94a3b8",
+                    fontSize:
+                      "18px",
+                    fontWeight:
+                      "700",
+                    marginBottom:
+                      "10px",
+                  }}
+                >
+                  Monthly Savings
+                </span>
+
+                <strong
+                  style={{
+                    color:
+                      "#ffffff",
+                    fontSize:
+                      "29px",
+                  }}
+                >
+                  {money(
+                    monthlySavings
+                  )}
+                </strong>
+              </div>
+
             </div>
 
-            <div>
-              <span>
-                Average Expense
-              </span>
+            {/* AVERAGE */}
 
-              <strong>
-                {money(
-                  Math.round(
-                    averageExpense
-                  )
-                )}
-              </strong>
+            <div
+              style={{
+                minHeight:
+                  "145px",
+                padding:
+                  "24px",
+                borderRadius:
+                  "18px",
+                border:
+                  "2px solid #914dff",
+                background:
+                  "#21183c",
+                display:
+                  "flex",
+                alignItems:
+                  "center",
+                gap:
+                  "20px",
+                boxSizing:
+                  "border-box",
+              }}
+            >
+
+              <div
+                style={{
+                  width:
+                    "64px",
+                  height:
+                    "64px",
+                  minWidth:
+                    "64px",
+                  borderRadius:
+                    "50%",
+                  background:
+                    "#5221a0",
+                  display:
+                    "flex",
+                  alignItems:
+                    "center",
+                  justifyContent:
+                    "center",
+                  fontSize:
+                    "30px",
+                }}
+              >
+                📊
+              </div>
+
+              <div>
+                <span
+                  style={{
+                    display:
+                      "block",
+                    color:
+                      "#94a3b8",
+                    fontSize:
+                      "18px",
+                    fontWeight:
+                      "700",
+                    marginBottom:
+                      "10px",
+                  }}
+                >
+                  Average Expense
+                </span>
+
+                <strong
+                  style={{
+                    color:
+                      "#ffffff",
+                    fontSize:
+                      "29px",
+                  }}
+                >
+                  {money(
+                    Math.round(
+                      averageExpense
+                    )
+                  )}
+                </strong>
+              </div>
+
             </div>
 
-            <div>
-              <span>
-                Savings Rate
-              </span>
+            {/* SAVINGS RATE */}
 
-              <strong>
-                {Math.round(
-                  savingsRate
-                )}
-                %
-              </strong>
+            <div
+              style={{
+                minHeight:
+                  "145px",
+                padding:
+                  "24px",
+                borderRadius:
+                  "18px",
+                border:
+                  "2px solid #ffae00",
+                background:
+                  "#2c260d",
+                display:
+                  "flex",
+                alignItems:
+                  "center",
+                gap:
+                  "20px",
+                boxSizing:
+                  "border-box",
+              }}
+            >
+
+              <div
+                style={{
+                  width:
+                    "64px",
+                  height:
+                    "64px",
+                  minWidth:
+                    "64px",
+                  borderRadius:
+                    "50%",
+                  background:
+                    "#824400",
+                  display:
+                    "flex",
+                  alignItems:
+                    "center",
+                  justifyContent:
+                    "center",
+                  fontSize:
+                    "30px",
+                }}
+              >
+                💹
+              </div>
+
+              <div>
+                <span
+                  style={{
+                    display:
+                      "block",
+                    color:
+                      "#94a3b8",
+                    fontSize:
+                      "18px",
+                    fontWeight:
+                      "700",
+                    marginBottom:
+                      "10px",
+                  }}
+                >
+                  Savings Rate
+                </span>
+
+                <strong
+                  style={{
+                    color:
+                      "#ffffff",
+                    fontSize:
+                      "29px",
+                  }}
+                >
+                  {Math.round(
+                    savingsRate
+                  )}
+                  %
+                </strong>
+              </div>
+
             </div>
 
-            <div>
-              <span>
-                Highest Category
-              </span>
+            {/* HIGHEST CATEGORY */}
 
-              <strong>
-                {highestCategory}
-              </strong>
+            <div
+              style={{
+                minHeight:
+                  "145px",
+                padding:
+                  "24px",
+                borderRadius:
+                  "18px",
+                border:
+                  "2px solid #00d6cc",
+                background:
+                  "#082e2c",
+                display:
+                  "flex",
+                alignItems:
+                  "center",
+                gap:
+                  "20px",
+                boxSizing:
+                  "border-box",
+                overflow:
+                  "hidden",
+              }}
+            >
+
+              <div
+                style={{
+                  width:
+                    "64px",
+                  height:
+                    "64px",
+                  minWidth:
+                    "64px",
+                  borderRadius:
+                    "50%",
+                  background:
+                    "#075f59",
+                  display:
+                    "flex",
+                  alignItems:
+                    "center",
+                  justifyContent:
+                    "center",
+                  fontSize:
+                    "30px",
+                }}
+              >
+                🏆
+              </div>
+
+              <div
+                style={{
+                  minWidth:
+                    "0",
+                  overflow:
+                    "hidden",
+                }}
+              >
+
+                <span
+                  style={{
+                    display:
+                      "block",
+                    color:
+                      "#94a3b8",
+                    fontSize:
+                      "18px",
+                    fontWeight:
+                      "700",
+                    marginBottom:
+                      "10px",
+                  }}
+                >
+                  Highest Category
+                </span>
+
+                <strong
+                  style={{
+                    color:
+                      "#ffffff",
+                    fontSize:
+                      "25px",
+                    overflowWrap:
+                      "anywhere",
+                  }}
+                >
+                  {highestCategory}
+                </strong>
+
+              </div>
+
             </div>
 
           </div>
 
         </section>
 
-        {/* BUDGET */}
+        {/* =========================
+            MONTHLY BUDGET
+        ========================= */}
 
         <section className="card">
 
@@ -1475,52 +2363,258 @@ Generated by Personal Expense Tracker
             💰 Monthly Budget
           </h2>
 
-          <div className="budget-grid">
+          <div
+            style={{
+              display:
+                "grid",
+              gridTemplateColumns:
+                "repeat(2, minmax(0, 1fr))",
+              gap:
+                "18px",
+            }}
+          >
 
-            <div>
-              <span>
+            {/* BUDGET */}
+
+            <div
+              style={{
+                minHeight:
+                  "180px",
+                padding:
+                  "28px",
+                borderRadius:
+                  "18px",
+                border:
+                  "2px solid #2676ff",
+                background:
+                  "#10284d",
+                display:
+                  "flex",
+                flexDirection:
+                  "column",
+                justifyContent:
+                  "center",
+                boxSizing:
+                  "border-box",
+              }}
+            >
+
+              <span
+                style={{
+                  fontSize:
+                    "32px",
+                }}
+              >
+                💳
+              </span>
+
+              <span
+                style={{
+                  color:
+                    "#94a3b8",
+                  fontSize:
+                    "18px",
+                  fontWeight:
+                    "700",
+                  marginTop:
+                    "10px",
+                }}
+              >
                 Budget
               </span>
 
-              <strong>
-                {money(monthlyBudget)}
+              <strong
+                style={{
+                  color:
+                    "#5aa0ff",
+                  fontSize:
+                    "34px",
+                  marginTop:
+                    "8px",
+                }}
+              >
+                {money(
+                  monthlyBudget
+                )}
               </strong>
+
             </div>
 
-            <div>
-              <span>
+            {/* SPENT */}
+
+            <div
+              style={{
+                minHeight:
+                  "180px",
+                padding:
+                  "28px",
+                borderRadius:
+                  "18px",
+                border:
+                  "2px solid #e3294d",
+                background:
+                  "#351217",
+                display:
+                  "flex",
+                flexDirection:
+                  "column",
+                justifyContent:
+                  "center",
+                boxSizing:
+                  "border-box",
+              }}
+            >
+
+              <span
+                style={{
+                  fontSize:
+                    "32px",
+                }}
+              >
+                💸
+              </span>
+
+              <span
+                style={{
+                  color:
+                    "#94a3b8",
+                  fontSize:
+                    "18px",
+                  fontWeight:
+                    "700",
+                  marginTop:
+                    "10px",
+                }}
+              >
                 Spent
               </span>
 
-              <strong>
-                {money(monthlyExpenses)}
+              <strong
+                style={{
+                  color:
+                    "#ff7189",
+                  fontSize:
+                    "34px",
+                  marginTop:
+                    "8px",
+                }}
+              >
+                {money(
+                  monthlyExpenses
+                )}
               </strong>
+
             </div>
 
-            <div>
-              <span>
+            {/* REMAINING */}
+
+            <div
+              style={{
+                gridColumn:
+                  "1 / -1",
+                minHeight:
+                  "180px",
+                padding:
+                  "28px",
+                borderRadius:
+                  "18px",
+                border:
+                  "2px solid #00a978",
+                background:
+                  "#073329",
+                display:
+                  "flex",
+                flexDirection:
+                  "column",
+                justifyContent:
+                  "center",
+                boxSizing:
+                  "border-box",
+              }}
+            >
+
+              <span
+                style={{
+                  fontSize:
+                    "32px",
+                }}
+              >
+                💰
+              </span>
+
+              <span
+                style={{
+                  color:
+                    "#94a3b8",
+                  fontSize:
+                    "18px",
+                  fontWeight:
+                    "700",
+                  marginTop:
+                    "10px",
+                }}
+              >
                 Remaining
               </span>
 
-              <strong>
-                {money(budgetRemaining)}
+              <strong
+                style={{
+                  color:
+                    "#35e58b",
+                  fontSize:
+                    "34px",
+                  marginTop:
+                    "8px",
+                }}
+              >
+                {money(
+                  budgetRemaining
+                )}
               </strong>
+
             </div>
 
           </div>
 
-          <div className="budget-progress">
+          {/* PROGRESS */}
+
+          <div
+            style={{
+              height:
+                "18px",
+              marginTop:
+                "24px",
+              borderRadius:
+                "999px",
+              background:
+                "#334155",
+              overflow:
+                "hidden",
+            }}
+          >
 
             <div
-              className="budget-progress-bar"
               style={{
                 width: `${displayBudgetPercentage}%`,
+                height:
+                  "100%",
+                borderRadius:
+                  "999px",
+                background:
+                  "#3b82f6",
               }}
             />
 
           </div>
 
-          <p className="budget-percentage">
+          <p
+            style={{
+              fontSize:
+                "18px",
+              fontWeight:
+                "700",
+            }}
+          >
             {Math.round(
               budgetPercentage
             )}
@@ -1528,40 +2622,59 @@ Generated by Personal Expense Tracker
           </p>
 
           <p
-            className={`budget-message ${
-              budgetRemaining < 0
-                ? "danger"
-                : budgetPercentage >= 80
-                ? "warning"
-                : "success"
-            }`}
+            style={{
+              padding:
+                "20px",
+              borderRadius:
+                "16px",
+              border:
+                "1px solid #00a978",
+              background:
+                "#073329",
+              color:
+                "#35e58b",
+              fontSize:
+                "18px",
+              fontWeight:
+                "700",
+            }}
           >
-            {budgetRemaining < 0
+            {monthlyBudget <= 0
+              ? "Set a monthly budget to start tracking"
+              : budgetRemaining < 0
               ? "You have exceeded your budget"
-              : budgetPercentage >= 80
+              : budgetPercentage >=
+                80
               ? "You're close to your budget limit"
               : "You're within your budget"}
           </p>
 
+          {/* SET BUDGET */}
+
           <form
-            className="budget-form"
             onSubmit={(e) => {
               e.preventDefault();
 
-              const input =
-                e.currentTarget.elements.budget.value;
+              const value =
+                Number(
+                  e.currentTarget
+                    .elements
+                    .budget.value
+                );
 
-              const value = Number(input);
-
-              if (!value || value <= 0) {
+              if (
+                !value ||
+                value <= 0
+              ) {
                 alert(
                   "Please enter a budget greater than ₹0."
                 );
-
                 return;
               }
 
-              setMonthlyBudget(value);
+              setMonthlyBudget(
+                value
+              );
 
               localStorage.setItem(
                 "monthlyBudget",
@@ -1569,6 +2682,14 @@ Generated by Personal Expense Tracker
               );
 
               e.currentTarget.reset();
+            }}
+            style={{
+              display:
+                "flex",
+              gap:
+                "14px",
+              marginTop:
+                "20px",
             }}
           >
 
@@ -1578,9 +2699,35 @@ Generated by Personal Expense Tracker
               min="1"
               step="1"
               placeholder="Enter monthly budget"
+              style={{
+                flex:
+                  "1",
+              }}
             />
 
-            <button type="submit">
+            <button
+              type="submit"
+              style={{
+                minHeight:
+                  "52px",
+                padding:
+                  "14px 24px",
+                background:
+                  "#2563eb",
+                color:
+                  "#ffffff",
+                border:
+                  "2px solid #2563eb",
+                borderRadius:
+                  "10px",
+                fontSize:
+                  "16px",
+                fontWeight:
+                  "700",
+                cursor:
+                  "pointer",
+              }}
+            >
               Set Budget
             </button>
 
@@ -1588,7 +2735,9 @@ Generated by Personal Expense Tracker
 
         </section>
 
-        {/* ANALYTICS */}
+        {/* =========================
+            ANALYTICS
+        ========================= */}
 
         <section className="card">
 
@@ -1598,8 +2747,6 @@ Generated by Personal Expense Tracker
 
           <div className="charts-grid">
 
-            {/* PIE CHART */}
-
             <div className="chart-card">
 
               <h3>
@@ -1608,8 +2755,8 @@ Generated by Personal Expense Tracker
 
               <div className="chart-container">
 
-                {categoryChartData.length ? (
-
+                {categoryChartData.length >
+                0 ? (
                   <ResponsiveContainer
                     width="100%"
                     height="100%"
@@ -1618,7 +2765,9 @@ Generated by Personal Expense Tracker
                     <PieChart>
 
                       <Pie
-                        data={categoryChartData}
+                        data={
+                          categoryChartData
+                        }
                         dataKey="amount"
                         nameKey="name"
                         cx="50%"
@@ -1628,11 +2777,17 @@ Generated by Personal Expense Tracker
                       >
 
                         {categoryChartData.map(
-                          (entry, index) => (
+                          (
+                            entry,
+                            index
+                          ) => (
                             <Cell
-                              key={entry.name}
+                              key={
+                                entry.name
+                              }
                               fill={`hsl(${
-                                index * 42
+                                index *
+                                42
                               }, 70%, 55%)`}
                             />
                           )
@@ -1641,8 +2796,12 @@ Generated by Personal Expense Tracker
                       </Pie>
 
                       <Tooltip
-                        formatter={(value) =>
-                          money(value)
+                        formatter={(
+                          value
+                        ) =>
+                          money(
+                            value
+                          )
                         }
                       />
 
@@ -1651,20 +2810,15 @@ Generated by Personal Expense Tracker
                     </PieChart>
 
                   </ResponsiveContainer>
-
                 ) : (
-
                   <div className="empty-chart">
                     Add expenses to see the chart.
                   </div>
-
                 )}
 
               </div>
 
             </div>
-
-            {/* BAR CHART */}
 
             <div className="chart-card">
 
@@ -1680,20 +2834,28 @@ Generated by Personal Expense Tracker
                 >
 
                   <BarChart
-                    data={incomeExpenseData}
+                    data={
+                      incomeExpenseData
+                    }
                   >
 
                     <CartesianGrid
                       strokeDasharray="3 3"
                     />
 
-                    <XAxis dataKey="name" />
+                    <XAxis
+                      dataKey="name"
+                    />
 
                     <YAxis />
 
                     <Tooltip
-                      formatter={(value) =>
-                        money(value)
+                      formatter={(
+                        value
+                      ) =>
+                        money(
+                          value
+                        )
                       }
                     />
 
@@ -1716,8 +2878,6 @@ Generated by Personal Expense Tracker
 
             </div>
 
-            {/* LINE CHART */}
-
             <div className="chart-card full-width">
 
               <h3>
@@ -1726,28 +2886,36 @@ Generated by Personal Expense Tracker
 
               <div className="chart-container">
 
-                {trendData.length ? (
-
+                {trendData.length >
+                0 ? (
                   <ResponsiveContainer
                     width="100%"
                     height="100%"
                   >
 
                     <LineChart
-                      data={trendData}
+                      data={
+                        trendData
+                      }
                     >
 
                       <CartesianGrid
                         strokeDasharray="3 3"
                       />
 
-                      <XAxis dataKey="date" />
+                      <XAxis
+                        dataKey="date"
+                      />
 
                       <YAxis />
 
                       <Tooltip
-                        formatter={(value) =>
-                          money(value)
+                        formatter={(
+                          value
+                        ) =>
+                          money(
+                            value
+                          )
                         }
                       />
 
@@ -1756,19 +2924,18 @@ Generated by Personal Expense Tracker
                         dataKey="amount"
                         stroke="#2563eb"
                         strokeWidth={3}
-                        dot={{ r: 4 }}
+                        dot={{
+                          r: 4,
+                        }}
                       />
 
                     </LineChart>
 
                   </ResponsiveContainer>
-
                 ) : (
-
                   <div className="empty-chart">
                     Add expenses to see your daily trend.
                   </div>
-
                 )}
 
               </div>
@@ -1779,7 +2946,9 @@ Generated by Personal Expense Tracker
 
         </section>
 
-        {/* ADD TRANSACTION */}
+        {/* =========================
+            ADD TRANSACTION
+        ========================= */}
 
         <section className="card">
 
@@ -1790,7 +2959,9 @@ Generated by Personal Expense Tracker
           </h2>
 
           <form
-            onSubmit={handleTransactionSubmit}
+            onSubmit={
+              handleTransactionSubmit
+            }
           >
 
             <div className="form-grid">
@@ -1804,7 +2975,9 @@ Generated by Personal Expense Tracker
                 <input
                   type="text"
                   placeholder="Example: Grocery shopping"
-                  value={form.description}
+                  value={
+                    form.description
+                  }
                   onChange={(e) =>
                     updateForm(
                       "description",
@@ -1826,7 +2999,9 @@ Generated by Personal Expense Tracker
                   min="0"
                   step="0.01"
                   placeholder="Enter amount"
-                  value={form.amount}
+                  value={
+                    form.amount
+                  }
                   onChange={(e) =>
                     updateForm(
                       "amount",
@@ -1844,7 +3019,9 @@ Generated by Personal Expense Tracker
                 </label>
 
                 <select
-                  value={form.category}
+                  value={
+                    form.category
+                  }
                   onChange={(e) =>
                     updateForm(
                       "category",
@@ -1860,7 +3037,12 @@ Generated by Personal Expense Tracker
                   {CATEGORIES.map(
                     (category) => (
                       <option
-                        key={category}
+                        key={
+                          category
+                        }
+                        value={
+                          category
+                        }
                       >
                         {category}
                       </option>
@@ -1878,7 +3060,9 @@ Generated by Personal Expense Tracker
                 </label>
 
                 <select
-                  value={form.type}
+                  value={
+                    form.type
+                  }
                   onChange={(e) =>
                     updateForm(
                       "type",
@@ -1911,7 +3095,9 @@ Generated by Personal Expense Tracker
 
                 <input
                   type="date"
-                  value={form.date}
+                  value={
+                    form.date
+                  }
                   onChange={(e) =>
                     updateForm(
                       "date",
@@ -1924,22 +3110,91 @@ Generated by Personal Expense Tracker
 
             </div>
 
-            <div className="transaction-form-actions">
+            {/* BIG BLUE ADD BUTTON */}
+
+            <div
+              style={{
+                display:
+                  "flex",
+                width:
+                  "100%",
+                gap:
+                  "14px",
+                marginTop:
+                  "24px",
+              }}
+            >
 
               <button
-                className="primary-button"
                 type="submit"
+                style={{
+                  flex:
+                    "1",
+                  display:
+                    "flex",
+                  alignItems:
+                    "center",
+                  justifyContent:
+                    "center",
+                  minHeight:
+                    "56px",
+                  padding:
+                    "14px 24px",
+                  background:
+                    "#2563eb",
+                  color:
+                    "#ffffff",
+                  border:
+                    "2px solid #2563eb",
+                  borderRadius:
+                    "10px",
+                  fontSize:
+                    "17px",
+                  fontWeight:
+                    "700",
+                  cursor:
+                    "pointer",
+                  boxSizing:
+                    "border-box",
+                  appearance:
+                    "none",
+                  WebkitAppearance:
+                    "none",
+                }}
               >
                 {editingId !== null
-                  ? "Update Transaction"
-                  : "Add Transaction"}
+                  ? "✏️ Update Transaction"
+                  : "➕ Add Transaction"}
               </button>
 
               {editingId !== null && (
                 <button
-                  className="cancel-button"
                   type="button"
-                  onClick={cancelEdit}
+                  onClick={
+                    cancelEdit
+                  }
+                  style={{
+                    flex:
+                      "1",
+                    minHeight:
+                      "56px",
+                    padding:
+                      "14px 24px",
+                    background:
+                      "#e2e8f0",
+                    color:
+                      "#334155",
+                    border:
+                      "2px solid #cbd5e1",
+                    borderRadius:
+                      "10px",
+                    fontSize:
+                      "17px",
+                    fontWeight:
+                      "700",
+                    cursor:
+                      "pointer",
+                  }}
                 >
                   Cancel Edit
                 </button>
@@ -1951,7 +3206,9 @@ Generated by Personal Expense Tracker
 
         </section>
 
-        {/* TRANSACTION HISTORY */}
+        {/* =========================
+            TRANSACTION HISTORY
+        ========================= */}
 
         <section className="card">
 
@@ -1963,23 +3220,29 @@ Generated by Personal Expense Tracker
 
           </div>
 
-          {/* FILTERS */}
-
           <div className="filters">
 
             <input
               type="text"
               placeholder="Search transactions..."
-              value={search}
+              value={
+                search
+              }
               onChange={(e) =>
-                setSearch(e.target.value)
+                setSearch(
+                  e.target.value
+                )
               }
             />
 
             <select
-              value={filterType}
+              value={
+                filterType
+              }
               onChange={(e) =>
-                setFilterType(e.target.value)
+                setFilterType(
+                  e.target.value
+                )
               }
             >
 
@@ -1998,7 +3261,9 @@ Generated by Personal Expense Tracker
             </select>
 
             <select
-              value={filterCategory}
+              value={
+                filterCategory
+              }
               onChange={(e) =>
                 setFilterCategory(
                   e.target.value
@@ -2013,7 +3278,12 @@ Generated by Personal Expense Tracker
               {CATEGORIES.map(
                 (category) => (
                   <option
-                    key={category}
+                    key={
+                      category
+                    }
+                    value={
+                      category
+                    }
                   >
                     {category}
                   </option>
@@ -2023,8 +3293,6 @@ Generated by Personal Expense Tracker
             </select>
 
           </div>
-
-          {/* DOWNLOAD */}
 
           <div className="download-container">
 
@@ -2036,15 +3304,22 @@ Generated by Personal Expense Tracker
                 const transaction =
                   transactions.find(
                     (item) =>
-                      String(item.id) ===
+                      String(
+                        item.id
+                      ) ===
                       e.target.value
                   );
 
-                if (transaction) {
-                  downloadBill(transaction);
+                if (
+                  transaction
+                ) {
+                  downloadBill(
+                    transaction
+                  );
                 }
 
-                e.target.value = "";
+                e.target.value =
+                  "";
 
               }}
             >
@@ -2054,59 +3329,70 @@ Generated by Personal Expense Tracker
               </option>
 
               {transactions.map(
-                (item) => (
-
+                (transaction) => (
                   <option
-                    key={item.id}
-                    value={item.id}
+                    key={
+                      transaction.id
+                    }
+                    value={
+                      transaction.id
+                    }
                   >
-                    {item.date} —{" "}
-                    {item.description} —{" "}
-                    {money(item.amount)}
+                    {transaction.date}
+                    {" — "}
+                    {
+                      transaction.description
+                    }
+                    {" — "}
+                    {money(
+                      transaction.amount
+                    )}
                   </option>
-
                 )
               )}
 
             </select>
 
             <span className="download-hint">
-              Select a transaction above to
-              download its bill
+              Select a transaction above to download its bill
             </span>
 
           </div>
 
-          {/* TRANSACTION LIST */}
-
           <div className="transaction-list">
 
-            {filteredTransactions.length === 0 ? (
-
+            {filteredTransactions.length ===
+            0 ? (
               <p className="empty-message">
                 No transactions found.
               </p>
-
             ) : (
-
               filteredTransactions.map(
                 (transaction) => (
 
                   <div
                     className="transaction-item"
-                    key={transaction.id}
+                    key={
+                      transaction.id
+                    }
                   >
 
                     <div className="transaction-main">
 
                       <h3>
-                        {transaction.description}
+                        {
+                          transaction.description
+                        }
                       </h3>
 
                       <p>
-                        {transaction.category}
+                        {
+                          transaction.category
+                        }
                         {" • "}
-                        {transaction.date}
+                        {
+                          transaction.date
+                        }
                       </p>
 
                     </div>
@@ -2121,6 +3407,7 @@ Generated by Personal Expense Tracker
                             : "expense-text"
                         }
                       >
+
                         {transaction.type ===
                         "income"
                           ? "+"
@@ -2129,6 +3416,7 @@ Generated by Personal Expense Tracker
                         {money(
                           transaction.amount
                         )}
+
                       </strong>
 
                       <div className="transaction-buttons">
@@ -2174,7 +3462,6 @@ Generated by Personal Expense Tracker
 
                 )
               )
-
             )}
 
           </div>
