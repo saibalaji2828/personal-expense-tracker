@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 import {
@@ -17,6 +17,10 @@ import {
   Line,
 } from "recharts";
 
+/* =========================================================
+   CONSTANTS
+========================================================= */
+
 const CATEGORIES = [
   "Food",
   "Transport",
@@ -28,29 +32,80 @@ const CATEGORIES = [
   "Other",
 ];
 
-const money = (value) =>
-  `₹${Number(value || 0).toLocaleString("en-IN", {
-    maximumFractionDigits: 2,
-  })}`;
+const CATEGORY_COLORS = [
+  "#22C55E",
+  "#3B82F6",
+  "#F59E0B",
+  "#A855F7",
+  "#EF4444",
+  "#06B6D4",
+  "#EC4899",
+  "#14B8A6",
+];
 
-const todayString = () =>
-  new Date().toISOString().slice(0, 10);
+/* =========================================================
+   HELPERS
+========================================================= */
 
-const currentMonth = () =>
-  new Date().toISOString().slice(0, 7);
+const normalizeEmail = (email) =>
+  String(email || "")
+    .trim()
+    .toLowerCase();
 
-const escapeHtml = (value) =>
-  String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+const transactionStorageKey = (email) =>
+  `transactions_${normalizeEmail(email)}`;
+
+const budgetStorageKey = (email) =>
+  `monthlyBudget_${normalizeEmail(email)}`;
+
+const budgetSetStorageKey = (email) =>
+  `monthlyBudgetSet_${normalizeEmail(email)}`;
+
+const getToday = () => {
+  const date = new Date();
+
+  const year = date.getFullYear();
+
+  const month = String(
+    date.getMonth() + 1
+  ).padStart(2, "0");
+
+  const day = String(
+    date.getDate()
+  ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+const getCurrentMonth = () => {
+  const date = new Date();
+
+  const year = date.getFullYear();
+
+  const month = String(
+    date.getMonth() + 1
+  ).padStart(2, "0");
+
+  return `${year}-${month}`;
+};
+
+const formatMoney = (value) => {
+  return `₹${Number(value || 0).toLocaleString(
+    "en-IN",
+    {
+      maximumFractionDigits: 2,
+    }
+  )}`;
+};
+
+/* =========================================================
+   APP
+========================================================= */
 
 function App() {
-  /* =========================
-     USER
-  ========================= */
+  /* =======================================================
+     USER / AUTH
+  ======================================================= */
 
   const [user, setUser] = useState(() => {
     try {
@@ -58,105 +113,106 @@ function App() {
         localStorage.getItem("expenseUser");
 
       const loggedIn =
-        localStorage.getItem("isLoggedIn") === "true";
+        localStorage.getItem("isLoggedIn") ===
+        "true";
 
-      return loggedIn && savedUser
-        ? JSON.parse(savedUser)
-        : null;
+      if (
+        loggedIn &&
+        savedUser
+      ) {
+        return JSON.parse(savedUser);
+      }
+
+      return null;
     } catch {
       return null;
     }
   });
 
-  const [page, setPage] = useState(() =>
-    localStorage.getItem("isLoggedIn") === "true"
-      ? "dashboard"
-      : "login"
-  );
+  const [page, setPage] = useState(() => {
+    return (
+      localStorage.getItem(
+        "isLoggedIn"
+      ) === "true"
+        ? "dashboard"
+        : "login"
+    );
+  });
 
-  /* =========================
+  /* =======================================================
      LOGIN
-  ========================= */
+  ======================================================= */
 
-  const [loginData, setLoginData] = useState({
-    email: "",
-    password: "",
-  });
+  const [loginData, setLoginData] =
+    useState({
+      email: "",
+      password: "",
+    });
 
-  /* =========================
+  const [showLoginPassword, setShowLoginPassword] =
+    useState(false);
+
+  /* =======================================================
      SIGNUP
-  ========================= */
+  ======================================================= */
 
-  const [signupData, setSignupData] = useState({
-    name: "",
-    gender: "",
-    age: "",
-    occupation: "",
-    email: "",
-    number: "",
-    password: "",
-  });
+  const [signupData, setSignupData] =
+    useState({
+      name: "",
+      gender: "",
+      age: "",
+      occupation: "",
+      email: "",
+      number: "",
+      password: "",
+    });
 
-  /* =========================
+  const [showSignupPassword, setShowSignupPassword] =
+    useState(false);
+
+  /* =======================================================
      TRANSACTIONS
-  ========================= */
+  ======================================================= */
 
-  const [transactions, setTransactions] = useState(() => {
-    try {
-      const saved =
-        localStorage.getItem("transactions");
+  const [transactions, setTransactions] =
+    useState([]);
 
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
-
-  /* =========================
+  /* =======================================================
      BUDGET
-     STARTS AT ₹0
-  ========================= */
 
-  const [monthlyBudget, setMonthlyBudget] = useState(() => {
-    try {
-      const saved =
-        localStorage.getItem("monthlyBudget");
+     NEW USER = 0
+  ======================================================= */
 
-      if (
-        saved === null ||
-        saved === "" ||
-        Number(saved) <= 0
-      ) {
-        return 0;
-      }
+  const [monthlyBudget, setMonthlyBudget] =
+    useState(0);
 
-      return Number(saved);
-    } catch {
-      return 0;
-    }
-  });
+  /* =======================================================
+     MONTH
+  ======================================================= */
 
   const [selectedMonth, setSelectedMonth] =
-    useState(currentMonth());
+    useState(
+      getCurrentMonth()
+    );
 
-  /* =========================
+  /* =======================================================
      TRANSACTION FORM
-  ========================= */
+  ======================================================= */
 
   const [form, setForm] = useState({
     description: "",
     amount: "",
     category: "",
     type: "",
-    date: todayString(),
+    date: getToday(),
   });
 
   const [editingId, setEditingId] =
     useState(null);
 
-  /* =========================
+  /* =======================================================
      FILTERS
-  ========================= */
+  ======================================================= */
 
   const [search, setSearch] =
     useState("");
@@ -167,133 +223,352 @@ function App() {
   const [filterCategory, setFilterCategory] =
     useState("all");
 
-  /* =========================
-     THEME
-  ========================= */
+  const [historyMonth, setHistoryMonth] =
+    useState("all");
 
-  const [darkMode, setDarkMode] = useState(() => {
-    return (
-      localStorage.getItem("expenseTheme") ===
-      "dark"
-    );
+  const [sortOption, setSortOption] =
+    useState("newest");
+
+  /* =======================================================
+     DARK / LIGHT MODE
+  ======================================================= */
+
+  const [darkMode, setDarkMode] =
+    useState(() => {
+      return (
+        localStorage.getItem(
+          "expenseTheme"
+        ) === "dark"
+      );
+    });
+
+  /* =======================================================
+     RESPONSIVE MOBILE LAYOUT
+
+     Monthly Overview uses 2 columns on desktop/tablet and
+     automatically switches to 1 column on phones.
+  ======================================================= */
+
+  const [isMobile, setIsMobile] = useState(() => {
+    return typeof window !== "undefined" && window.innerWidth <= 600;
   });
 
-  /* =========================
-     SAVE TRANSACTIONS
-  ========================= */
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 600);
+    };
 
-  const saveTransactions = (next) => {
-    setTransactions(next);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  /* =======================================================
+     LOAD USER TRANSACTIONS
+  ======================================================= */
+
+  useEffect(() => {
+    if (!user?.email) {
+      setTransactions([]);
+      return;
+    }
+
+    const key =
+      transactionStorageKey(
+        user.email
+      );
+
+    try {
+      const saved =
+        localStorage.getItem(key);
+
+      if (!saved) {
+        setTransactions([]);
+        return;
+      }
+
+      const parsed =
+        JSON.parse(saved);
+
+      if (
+        Array.isArray(parsed)
+      ) {
+        setTransactions(parsed);
+      } else {
+        setTransactions([]);
+      }
+    } catch {
+      setTransactions([]);
+    }
+  }, [user]);
+
+  /* =======================================================
+     LOAD USER BUDGET
+
+     IMPORTANT:
+
+     The old application stored ₹10,000
+     directly.
+
+     We now check whether the USER
+     actually set the budget.
+
+     If not:
+       Budget = ₹0
+  ======================================================= */
+
+  useEffect(() => {
+    if (!user?.email) {
+      setMonthlyBudget(0);
+      return;
+    }
+
+    const budgetKey =
+      budgetStorageKey(
+        user.email
+      );
+
+    const budgetSetKey =
+      budgetSetStorageKey(
+        user.email
+      );
+
+    const budgetWasSet =
+      localStorage.getItem(
+        budgetSetKey
+      ) === "true";
+
+    /*
+      If the user has NOT explicitly
+      set a budget, force it to ZERO.
+
+      This automatically handles old
+      ₹10,000 values from previous
+      versions.
+    */
+
+    if (!budgetWasSet) {
+      setMonthlyBudget(0);
+
+      localStorage.setItem(
+        budgetKey,
+        "0"
+      );
+
+      return;
+    }
+
+    /*
+      User has explicitly set a budget.
+      Load it.
+    */
+
+    const savedBudget =
+      localStorage.getItem(
+        budgetKey
+      );
+
+    const value =
+      Number(savedBudget);
+
+    if (
+      Number.isFinite(value) &&
+      value > 0
+    ) {
+      setMonthlyBudget(value);
+    } else {
+      setMonthlyBudget(0);
+
+      localStorage.setItem(
+        budgetKey,
+        "0"
+      );
+
+      localStorage.setItem(
+        budgetSetKey,
+        "false"
+      );
+    }
+  }, [user]);
+
+  /* =======================================================
+     SAVE TRANSACTIONS
+  ======================================================= */
+
+  const saveTransactions = (
+    newTransactions
+  ) => {
+    setTransactions(
+      newTransactions
+    );
+
+    if (!user?.email) {
+      return;
+    }
 
     localStorage.setItem(
-      "transactions",
-      JSON.stringify(next)
+      transactionStorageKey(
+        user.email
+      ),
+      JSON.stringify(
+        newTransactions
+      )
     );
   };
 
-  /* =========================
+  /* =======================================================
      LOGIN
-  ========================= */
+  ======================================================= */
 
   const handleLogin = (e) => {
     e.preventDefault();
 
-    let storedUser = null;
+    const email =
+      normalizeEmail(
+        loginData.email
+      );
+
+    const password =
+      loginData.password;
+
+    let users = [];
 
     try {
-      const saved =
-        localStorage.getItem("expenseUser");
+      const savedUsers =
+        localStorage.getItem(
+          "expenseUsers"
+        );
 
-      if (saved) {
-        storedUser = JSON.parse(saved);
+      if (savedUsers) {
+        const parsed =
+          JSON.parse(savedUsers);
+
+        if (
+          Array.isArray(parsed)
+        ) {
+          users = parsed;
+        }
       }
     } catch {
-      storedUser = null;
+      users = [];
     }
 
-    if (!storedUser) {
-      alert(
-        "No account found. Please create an account first."
-      );
-      return;
-    }
-
-    const enteredEmail =
-      loginData.email
-        .trim()
-        .toLowerCase();
-
-    const storedEmail =
-      String(storedUser.email)
-        .trim()
-        .toLowerCase();
+    /*
+      Compatibility with old version
+    */
 
     if (
-      enteredEmail === storedEmail &&
-      loginData.password ===
-        storedUser.password
+      users.length === 0
     ) {
-      setUser(storedUser);
+      const oldUser =
+        localStorage.getItem(
+          "expenseUser"
+        );
 
-      localStorage.setItem(
-        "isLoggedIn",
-        "true"
+      if (oldUser) {
+        try {
+          const parsedOldUser =
+            JSON.parse(oldUser);
+
+          if (parsedOldUser?.email) {
+            const oldEmail = normalizeEmail(parsedOldUser.email);
+            const alreadyExists = users.some(
+              (item) => normalizeEmail(item.email) === oldEmail
+            );
+
+            if (!alreadyExists) {
+              users.push(parsedOldUser);
+              localStorage.setItem(
+                "expenseUsers",
+                JSON.stringify(users)
+              );
+            }
+          }
+        } catch {
+          // Ignore invalid legacy user data.
+        }
+      }
+    }
+
+    const foundUser =
+      users.find(
+        (item) =>
+          normalizeEmail(
+            item.email
+          ) === email &&
+          item.password ===
+            password
       );
 
-      setPage("dashboard");
-
-      setLoginData({
-        email: "",
-        password: "",
-      });
-    } else {
+    if (!foundUser) {
       alert(
         "Invalid email or password."
       );
-    }
-  };
 
-  /* =========================
-     SIGNUP
-  ========================= */
-
-  const handleSignup = (e) => {
-    e.preventDefault();
-
-    if (!signupData.name.trim()) {
-      alert("Please enter your name.");
       return;
     }
 
-    if (!signupData.email.trim()) {
-      alert("Please enter your email.");
-      return;
-    }
+    /*
+      Make sure user transaction
+      storage exists.
+    */
 
-    if (!signupData.number.trim()) {
-      alert(
-        "Please enter your phone number."
+    const transactionKey =
+      transactionStorageKey(
+        foundUser.email
       );
-      return;
-    }
 
-    if (!signupData.password.trim()) {
-      alert(
-        "Please create a password."
+    if (
+      localStorage.getItem(
+        transactionKey
+      ) === null
+    ) {
+      localStorage.setItem(
+        transactionKey,
+        JSON.stringify([])
       );
-      return;
     }
 
-    const newUser = {
-      ...signupData,
-      name: signupData.name.trim(),
-      email: signupData.email.trim(),
-      number: signupData.number.trim(),
-    };
+    /*
+      IMPORTANT:
+
+      Do NOT automatically consider
+      an old ₹10,000 budget as a
+      user-selected budget.
+
+      Only create the new flag if
+      it doesn't exist.
+
+      Old accounts therefore become
+      ₹0 until they set a budget.
+    */
+
+    const budgetSetKey =
+      budgetSetStorageKey(
+        foundUser.email
+      );
+
+    if (
+      localStorage.getItem(
+        budgetSetKey
+      ) === null
+    ) {
+      localStorage.setItem(
+        budgetSetKey,
+        "false"
+      );
+    }
+
+    setUser(foundUser);
 
     localStorage.setItem(
       "expenseUser",
-      JSON.stringify(newUser)
+      JSON.stringify(
+        foundUser
+      )
     );
 
     localStorage.setItem(
@@ -301,26 +576,7 @@ function App() {
       "true"
     );
 
-    setUser(newUser);
     setPage("dashboard");
-
-    alert(
-      "Account created successfully!"
-    );
-  };
-
-  /* =========================
-     LOGOUT
-  ========================= */
-
-  const handleLogout = () => {
-    localStorage.setItem(
-      "isLoggedIn",
-      "false"
-    );
-
-    setUser(null);
-    setPage("login");
 
     setLoginData({
       email: "",
@@ -328,160 +584,489 @@ function App() {
     });
   };
 
-  /* =========================
-     FORM
-  ========================= */
+  /* =======================================================
+     SIGN UP
 
-  const updateForm = (key, value) => {
-    setForm((previous) => ({
-      ...previous,
-      [key]: value,
-    }));
-  };
+     BRAND NEW ACCOUNT:
+       Transactions = []
+       Budget = 0
+       BudgetSet = false
+  ======================================================= */
 
-  /* =========================
-     ADD / UPDATE TRANSACTION
-  ========================= */
-
-  const handleTransactionSubmit = (e) => {
+  const handleSignup = (e) => {
     e.preventDefault();
 
-    if (!form.description.trim()) {
+    if (
+      !signupData.name.trim()
+    ) {
       alert(
-        "Please enter a description."
+        "Please enter your name."
       );
       return;
     }
 
     if (
-      !form.amount ||
-      Number(form.amount) <= 0
+      !signupData.email.trim()
     ) {
       alert(
-        "Please enter an amount greater than ₹0."
+        "Please enter your email."
       );
       return;
     }
 
-    if (!form.category) {
+    if (
+      !signupData.number.trim()
+    ) {
       alert(
-        "Please select a category."
+        "Please enter your phone number."
       );
       return;
     }
 
-    if (!form.type) {
+    if (
+      !signupData.password.trim()
+    ) {
       alert(
-        "Please select Income or Expense."
+        "Please create a password."
       );
       return;
     }
 
-    if (!form.date) {
-      alert("Please select a date.");
-      return;
-    }
+    const email =
+      normalizeEmail(
+        signupData.email
+      );
 
-    if (editingId !== null) {
-      const updated =
-        transactions.map((transaction) =>
-          transaction.id === editingId
-            ? {
-                ...transaction,
-                ...form,
-                amount: Number(
-                  form.amount
-                ),
-              }
-            : transaction
+    let users = [];
+
+    try {
+      const savedUsers =
+        localStorage.getItem(
+          "expenseUsers"
         );
 
-      saveTransactions(updated);
+      if (savedUsers) {
+        const parsed =
+          JSON.parse(savedUsers);
 
-      alert(
-        "Transaction updated successfully."
-      );
-    } else {
-      const newTransaction = {
-        id: Date.now(),
-        description:
-          form.description.trim(),
-        amount: Number(form.amount),
-        category: form.category,
-        type: form.type,
-        date: form.date,
-      };
-
-      saveTransactions([
-        ...transactions,
-        newTransaction,
-      ]);
-
-      alert(
-        "Transaction added successfully."
-      );
+        if (
+          Array.isArray(parsed)
+        ) {
+          users = parsed;
+        }
+      }
+    } catch {
+      users = [];
     }
 
-    setForm({
-      description: "",
-      amount: "",
-      category: "",
-      type: "",
-      date: todayString(),
-    });
+    /*
+      Check whether email already
+      exists.
+    */
 
-    setEditingId(null);
+    const existingUser =
+      users.find(
+        (item) =>
+          normalizeEmail(
+            item.email
+          ) === email
+      );
+
+    if (existingUser) {
+      alert(
+        "An account with this email already exists. Please sign in."
+      );
+
+      setLoginData({
+        email,
+        password: "",
+      });
+
+      setPage("login");
+
+      return;
+    }
+
+    const newUser = {
+      ...signupData,
+      name:
+        signupData.name.trim(),
+      email,
+      number:
+        signupData.number.trim(),
+    };
+
+    /*
+      Save user.
+    */
+
+    users.push(newUser);
+
+    localStorage.setItem(
+      "expenseUsers",
+      JSON.stringify(users)
+    );
+
+    /*
+      ============================================
+      BRAND NEW USER
+      ============================================
+    */
+
+    localStorage.setItem(
+      transactionStorageKey(
+        email
+      ),
+      JSON.stringify([])
+    );
+
+    /*
+      Budget starts at ZERO.
+    */
+
+    localStorage.setItem(
+      budgetStorageKey(
+        email
+      ),
+      "0"
+    );
+
+    /*
+      VERY IMPORTANT:
+      The user has NOT set a budget.
+    */
+
+    localStorage.setItem(
+      budgetSetStorageKey(
+        email
+      ),
+      "false"
+    );
+
+    /*
+      Clear React state.
+    */
+
+    setTransactions([]);
+
+    setMonthlyBudget(0);
+
+    /*
+      Login the new user.
+    */
+
+    setUser(newUser);
+
+    localStorage.setItem(
+      "expenseUser",
+      JSON.stringify(
+        newUser
+      )
+    );
+
+    localStorage.setItem(
+      "isLoggedIn",
+      "true"
+    );
+
+    setPage("dashboard");
+
+    /*
+      Clear signup form.
+    */
+
+    setSignupData({
+      name: "",
+      gender: "",
+      age: "",
+      occupation: "",
+      email: "",
+      number: "",
+      password: "",
+    });
   };
 
-  /* =========================
-     EDIT
-  ========================= */
+  /* =======================================================
+     LOGOUT
+  ======================================================= */
 
-  const editTransaction = (transaction) => {
-    setEditingId(transaction.id);
+  const handleLogout = () => {
+    setUser(null);
+
+    setTransactions([]);
+
+    setMonthlyBudget(0);
+
+    localStorage.setItem(
+      "isLoggedIn",
+      "false"
+    );
+
+    /*
+      IMPORTANT:
+      Do NOT delete "expenseUser" here.
+
+      It stores the last active account and is also used
+      to support accounts created by older versions of the app.
+      The real account list is stored in "expenseUsers".
+
+      Logging out must only end the session. It must NOT delete
+      the account, so the same email and password can be used
+      to sign in again later.
+    */
+
+    setPage("login");
+  };
+
+  /* =======================================================
+     DARK / LIGHT MODE
+  ======================================================= */
+
+  const toggleTheme = () => {
+    setDarkMode(
+      (previous) => {
+        const next =
+          !previous;
+
+        localStorage.setItem(
+          "expenseTheme",
+          next
+            ? "dark"
+            : "light"
+        );
+
+        return next;
+      }
+    );
+  };
+
+  /* =======================================================
+     FORM UPDATE
+  ======================================================= */
+
+  const updateForm = (
+    field,
+    value
+  ) => {
+    setForm(
+      (previous) => ({
+        ...previous,
+        [field]: value,
+      })
+    );
+
+    /*
+      Keep Monthly Overview synchronized with the
+      transaction date. This works for both new
+      transactions and existing transactions being edited.
+    */
+    if (field === "date" && value) {
+      const month = value.slice(0, 7);
+
+      if (month) {
+        setSelectedMonth(month);
+      }
+    }
+  };
+
+  /* =======================================================
+     ADD / UPDATE TRANSACTION
+  ======================================================= */
+
+  const handleTransactionSubmit =
+    (e) => {
+      e.preventDefault();
+
+      if (
+        !form.description.trim()
+      ) {
+        alert(
+          "Please enter a description."
+        );
+        return;
+      }
+
+      if (
+        !form.amount ||
+        Number(form.amount) <= 0
+      ) {
+        alert(
+          "Please enter an amount greater than ₹0."
+        );
+        return;
+      }
+
+      if (!form.category) {
+        alert(
+          "Please select a category."
+        );
+        return;
+      }
+
+      if (!form.type) {
+        alert(
+          "Please select Income or Expense."
+        );
+        return;
+      }
+
+      if (!form.date) {
+        alert(
+          "Please select a date."
+        );
+        return;
+      }
+
+      /*
+        UPDATE
+      */
+
+      if (
+        editingId !== null
+      ) {
+        const updated =
+          transactions.map(
+            (item) =>
+              item.id ===
+              editingId
+                ? {
+                    ...item,
+                    description:
+                      form.description.trim(),
+                    amount:
+                      Number(
+                        form.amount
+                      ),
+                    category:
+                      form.category,
+                    type:
+                      form.type,
+                    date:
+                      form.date,
+                  }
+                : item
+          );
+
+        saveTransactions(
+          updated
+        );
+
+        alert(
+          "Transaction updated successfully."
+        );
+      }
+
+      /*
+        ADD
+      */
+
+      else {
+        const newTransaction = {
+          id: Date.now(),
+          description:
+            form.description.trim(),
+          amount:
+            Number(
+              form.amount
+            ),
+          category:
+            form.category,
+          type:
+            form.type,
+          date:
+            form.date,
+        };
+
+        saveTransactions([
+          ...transactions,
+          newTransaction,
+        ]);
+
+        alert(
+          "Transaction added successfully."
+        );
+      }
+
+      /*
+        After saving, keep the new transaction form inside
+        the month currently selected in Monthly Overview.
+      */
+      setForm({
+        description: "",
+        amount: "",
+        category: "",
+        type: "",
+        date: selectedMonth
+          ? `${selectedMonth}-01`
+          : getToday(),
+      });
+
+      setEditingId(null);
+    };
+
+  /* =======================================================
+     EDIT TRANSACTION
+  ======================================================= */
+
+  const editTransaction = (
+    transaction
+  ) => {
+    setEditingId(
+      transaction.id
+    );
 
     setForm({
       description:
         transaction.description,
-      amount: String(
-        transaction.amount
-      ),
+      amount:
+        String(
+          transaction.amount
+        ),
       category:
         transaction.category,
-      type: transaction.type,
-      date: transaction.date,
+      type:
+        transaction.type,
+      date:
+        transaction.date,
     });
 
     window.scrollTo({
-      top: document.body.scrollHeight,
+      top:
+        document.body
+          .scrollHeight,
       behavior: "smooth",
     });
   };
 
-  /* =========================
-     DELETE
-  ========================= */
+  /* =======================================================
+     DELETE TRANSACTION
+  ======================================================= */
 
-  const deleteTransaction = (id) => {
+  const deleteTransaction = (
+    id
+  ) => {
     if (
       !window.confirm(
-        "Delete this transaction?"
+        "Are you sure you want to delete this transaction?"
       )
     ) {
       return;
     }
 
-    saveTransactions(
+    const updated =
       transactions.filter(
-        (transaction) =>
-          transaction.id !== id
-      )
+        (item) =>
+          item.id !== id
+      );
+
+    saveTransactions(
+      updated
     );
   };
 
-  /* =========================
+  /* =======================================================
      CANCEL EDIT
-  ========================= */
+  ======================================================= */
 
   const cancelEdit = () => {
     setEditingId(null);
@@ -491,98 +1076,141 @@ function App() {
       amount: "",
       category: "",
       type: "",
-      date: todayString(),
+      date: getToday(),
     });
   };
 
-  /* =========================
-     TOTALS
-  ========================= */
+  /* =======================================================
+     TOTAL INCOME
+  ======================================================= */
 
-  const totalIncome = useMemo(
-    () =>
-      transactions
-        .filter(
-          (item) =>
-            item.type === "income"
-        )
-        .reduce(
-          (sum, item) =>
-            sum + Number(item.amount),
-          0
-        ),
-    [transactions]
-  );
+  const totalIncome =
+    transactions
+      .filter(
+        (item) =>
+          item.type ===
+            "income" &&
+          item.date &&
+          item.date.startsWith(
+            selectedMonth
+          )
+      )
+      .reduce(
+        (total, item) =>
+          total +
+          Number(
+            item.amount
+          ),
+        0
+      );
 
-  const totalExpenses = useMemo(
-    () =>
-      transactions
-        .filter(
-          (item) =>
-            item.type === "expense"
-        )
-        .reduce(
-          (sum, item) =>
-            sum + Number(item.amount),
-          0
-        ),
-    [transactions]
-  );
+  /* =======================================================
+     TOTAL EXPENSES
+  ======================================================= */
 
-  const balance =
-    totalIncome - totalExpenses;
+  const totalExpenses =
+    transactions
+      .filter(
+        (item) =>
+          item.type ===
+            "expense" &&
+          item.date &&
+          item.date.startsWith(
+            selectedMonth
+          )
+      )
+      .reduce(
+        (total, item) =>
+          total +
+          Number(
+            item.amount
+          ),
+        0
+      );
 
-  /* =========================
-     MONTHLY DATA
-  ========================= */
+  /* =======================================================
+     TOTAL BALANCE
+  ======================================================= */
+
+  const totalBalance =
+    totalIncome -
+    totalExpenses;
+
+  /* =======================================================
+     MONTHLY TRANSACTIONS
+  ======================================================= */
 
   const monthlyTransactions =
-    useMemo(
-      () =>
-        transactions.filter(
-          (item) =>
-            item.date &&
-            item.date.startsWith(
-              selectedMonth
-            )
-        ),
-      [
-        transactions,
-        selectedMonth,
-      ]
-    );
+    useMemo(() => {
+      return transactions.filter(
+        (item) =>
+          item.date &&
+          item.date.startsWith(
+            selectedMonth
+          )
+      );
+    }, [
+      transactions,
+      selectedMonth,
+    ]);
+
+  /* =======================================================
+     MONTHLY INCOME
+  ======================================================= */
 
   const monthlyIncome =
     monthlyTransactions
       .filter(
         (item) =>
-          item.type === "income"
+          item.type ===
+          "income"
       )
       .reduce(
-        (sum, item) =>
-          sum + Number(item.amount),
+        (total, item) =>
+          total +
+          Number(
+            item.amount
+          ),
         0
       );
+
+  /* =======================================================
+     MONTHLY EXPENSES
+  ======================================================= */
 
   const monthlyExpenses =
     monthlyTransactions
       .filter(
         (item) =>
-          item.type === "expense"
+          item.type ===
+          "expense"
       )
       .reduce(
-        (sum, item) =>
-          sum + Number(item.amount),
+        (total, item) =>
+          total +
+          Number(
+            item.amount
+          ),
         0
       );
 
+  /* =======================================================
+     MONTHLY SAVINGS
+  ======================================================= */
+
   const monthlySavings =
-    monthlyIncome - monthlyExpenses;
+    monthlyIncome -
+    monthlyExpenses;
+
+  /* =======================================================
+     AVERAGE EXPENSE
+  ======================================================= */
 
   const expenseCount =
     monthlyTransactions.filter(
       (item) =>
-        item.type === "expense"
+        item.type ===
+        "expense"
     ).length;
 
   const averageExpense =
@@ -591,6 +1219,10 @@ function App() {
         expenseCount
       : 0;
 
+  /* =======================================================
+     SAVINGS RATE
+  ======================================================= */
+
   const savingsRate =
     monthlyIncome > 0
       ? (monthlySavings /
@@ -598,9 +1230,9 @@ function App() {
         100
       : 0;
 
-  /* =========================
-     CATEGORY DATA
-  ========================= */
+  /* =======================================================
+     CATEGORY TOTALS
+  ======================================================= */
 
   const categoryTotals =
     useMemo(() => {
@@ -608,7 +1240,8 @@ function App() {
 
       CATEGORIES.forEach(
         (category) => {
-          totals[category] = 0;
+          totals[category] =
+            0;
         }
       );
 
@@ -618,60 +1251,86 @@ function App() {
             item.type ===
             "expense"
         )
-        .forEach((item) => {
-          totals[item.category] =
-            (totals[item.category] ||
-              0) +
-            Number(item.amount);
-        });
+        .forEach(
+          (item) => {
+            totals[
+              item.category
+            ] =
+              (totals[
+                item.category
+              ] || 0) +
+              Number(
+                item.amount
+              );
+          }
+        );
 
       return totals;
-    }, [monthlyTransactions]);
+    }, [
+      monthlyTransactions,
+    ]);
+
+  /* =======================================================
+     HIGHEST SPENDING CATEGORY
+  ======================================================= */
 
   const highestCategory =
     useMemo(() => {
-      let best =
-        "No expenses yet";
+      let highestCategoryName =
+        "";
 
-      let bestAmount = 0;
+      let highestAmount =
+        0;
 
       Object.entries(
         categoryTotals
       ).forEach(
         ([category, amount]) => {
           if (
-            amount > bestAmount
+            amount >
+            highestAmount
           ) {
-            best = category;
-            bestAmount = amount;
+            highestAmount =
+              amount;
+
+            highestCategoryName =
+              category;
           }
         }
       );
 
-      return best ===
-        "No expenses yet"
-        ? best
-        : `${best} - ${money(
-            bestAmount
-          )}`;
-    }, [categoryTotals]);
+      if (
+        !highestCategoryName
+      ) {
+        return "No expenses yet";
+      }
 
-  /* =========================
-     BUDGET
-  ========================= */
+      return `${highestCategoryName} - ${formatMoney(
+        highestAmount
+      )}`;
+    }, [
+      categoryTotals,
+    ]);
+
+  /* =======================================================
+     BUDGET CALCULATIONS
+  ======================================================= */
+
+  const budgetSpent =
+    monthlyExpenses;
 
   const budgetRemaining =
     monthlyBudget -
-    monthlyExpenses;
+    budgetSpent;
 
   const budgetPercentage =
     monthlyBudget > 0
-      ? (monthlyExpenses /
+      ? (budgetSpent /
           monthlyBudget) *
         100
       : 0;
 
-  const displayBudgetPercentage =
+  const progressWidth =
     Math.min(
       Math.max(
         budgetPercentage,
@@ -680,59 +1339,155 @@ function App() {
       100
     );
 
-  /* =========================
-     FILTER
-  ========================= */
+  /* =======================================================
+     FILTERED TRANSACTIONS
+  ======================================================= */
+
+  /* =======================================================
+     DUPLICATE TRANSACTION DETECTION
+
+     Transactions are considered possible duplicates when they
+     have the same description, amount, category, type and date.
+     The first matching transaction is kept as the original and
+     every matching entry is highlighted in Transaction History.
+  ======================================================= */
+
+  const duplicateIds = useMemo(() => {
+    const groups = new Map();
+
+    transactions.forEach((item) => {
+      const key = [
+        String(item.description || "")
+          .trim()
+          .toLowerCase(),
+        Number(item.amount || 0),
+        String(item.category || "")
+          .trim()
+          .toLowerCase(),
+        String(item.type || "")
+          .trim()
+          .toLowerCase(),
+        String(item.date || ""),
+      ].join("|");
+
+      if (!groups.has(key)) {
+        groups.set(key, []);
+      }
+
+      groups.get(key).push(item.id);
+    });
+
+    const ids = new Set();
+
+    groups.forEach((idsInGroup) => {
+      if (idsInGroup.length > 1) {
+        idsInGroup.forEach((id) => ids.add(id));
+      }
+    });
+
+    return ids;
+  }, [transactions]);
+
+  /* =======================================================
+     FILTERED + SORTED TRANSACTIONS
+  ======================================================= */
 
   const filteredTransactions =
     useMemo(() => {
-      const text =
+      const searchText =
         search
-          .toLowerCase()
-          .trim();
+          .trim()
+          .toLowerCase();
 
-      return [...transactions]
-        .filter((item) => {
+      const filtered = transactions.filter(
+        (item) => {
           const matchesSearch =
-            !text ||
-            String(
-              item.description
-            )
+            !searchText ||
+            String(item.description || "")
               .toLowerCase()
-              .includes(text);
+              .includes(searchText) ||
+            String(item.category || "")
+              .toLowerCase()
+              .includes(searchText) ||
+            String(item.type || "")
+              .toLowerCase()
+              .includes(searchText) ||
+            String(item.date || "")
+              .includes(searchText);
 
           const matchesType =
             filterType === "all" ||
-            item.type ===
-              filterType;
+            item.type === filterType;
 
           const matchesCategory =
-            filterCategory ===
-              "all" ||
-            item.category ===
-              filterCategory;
+            filterCategory === "all" ||
+            item.category === filterCategory;
+
+          const matchesMonth =
+            historyMonth === "all" ||
+            String(item.date || "").startsWith(
+              historyMonth === "selected"
+                ? selectedMonth
+                : historyMonth
+            );
 
           return (
             matchesSearch &&
             matchesType &&
-            matchesCategory
+            matchesCategory &&
+            matchesMonth
           );
-        })
-        .sort(
-          (a, b) =>
-            new Date(b.date) -
-            new Date(a.date)
+        }
+      );
+
+      return filtered.sort((a, b) => {
+        if (sortOption === "oldest") {
+          return (
+            new Date(a.date) -
+            new Date(b.date)
+          );
+        }
+
+        if (sortOption === "amountHigh") {
+          return (
+            Number(b.amount) -
+            Number(a.amount)
+          );
+        }
+
+        if (sortOption === "amountLow") {
+          return (
+            Number(a.amount) -
+            Number(b.amount)
+          );
+        }
+
+        if (sortOption === "description") {
+          return String(a.description || "")
+            .localeCompare(
+              String(b.description || "")
+            );
+        }
+
+        // Newest first by default.
+        return (
+          new Date(b.date) -
+          new Date(a.date)
         );
+      });
     }, [
       transactions,
       search,
       filterType,
       filterCategory,
+      historyMonth,
+      selectedMonth,
+      sortOption,
     ]);
 
-  /* =========================
-     CHART DATA
-  ========================= */
+  /* =======================================================
+     CATEGORY CHART DATA
+  ======================================================= */
 
   const categoryChartData =
     Object.entries(
@@ -749,69 +1504,166 @@ function App() {
         })
       );
 
+  /* =======================================================
+     INCOME VS EXPENSE DATA
+  ======================================================= */
+
   const incomeExpenseData = [
     {
       name: "Income",
-      amount: monthlyIncome,
+      amount:
+        monthlyIncome,
     },
     {
       name: "Expenses",
-      amount: monthlyExpenses,
+      amount:
+        monthlyExpenses,
     },
   ];
 
-  const trendMap = {};
+  /* =======================================================
+     DAILY EXPENSE DATA
 
-  monthlyTransactions
-    .filter(
-      (item) =>
-        item.type === "expense"
-    )
-    .forEach((item) => {
-      trendMap[item.date] =
-        (trendMap[item.date] ||
-          0) +
-        Number(item.amount);
-    });
+     ALL DAYS OF MONTH ARE INCLUDED.
+  ======================================================= */
 
-  const trendData =
-    Object.entries(trendMap)
-      .sort(
-        ([a], [b]) =>
-          new Date(a) -
-          new Date(b)
-      )
-      .map(
-        ([date, amount]) => ({
-          date: date.slice(5),
+  const dailyExpenseData =
+    useMemo(() => {
+      const [
+        year,
+        month,
+      ] =
+        selectedMonth
+          .split("-")
+          .map(Number);
+
+      const daysInMonth =
+        new Date(
+          year,
+          month,
+          0
+        ).getDate();
+
+      const dailyExpenses =
+        Array(
+          daysInMonth
+        ).fill(0);
+
+      monthlyTransactions
+        .filter(
+          (item) =>
+            item.type ===
+            "expense"
+        )
+        .forEach(
+          (item) => {
+            const day =
+              Number(
+                item.date
+                  .split("-")[2]
+              );
+
+            if (
+              day >= 1 &&
+              day <=
+                daysInMonth
+            ) {
+              dailyExpenses[
+                day - 1
+              ] += Number(
+                item.amount
+              );
+            }
+          }
+        );
+
+      return dailyExpenses.map(
+        (
+          amount,
+          index
+        ) => ({
+          day:
+            String(
+              index + 1
+            ),
           amount,
         })
       );
+    }, [
+      monthlyTransactions,
+      selectedMonth,
+    ]);
 
-  /* =========================
-     THEME
-  ========================= */
+  /* =======================================================
+     SET BUDGET
+  ======================================================= */
 
-  const toggleTheme = () => {
-    const next =
-      !darkMode;
+  const handleBudgetSubmit = (
+    e
+  ) => {
+    e.preventDefault();
 
-    setDarkMode(next);
+    const value =
+      Number(
+        e.currentTarget.elements
+          .budget.value
+      );
 
-    localStorage.setItem(
-      "expenseTheme",
-      next ? "dark" : "light"
+    if (
+      !Number.isFinite(
+        value
+      ) ||
+      value <= 0
+    ) {
+      alert(
+        "Please enter a budget greater than ₹0."
+      );
+
+      return;
+    }
+
+    /*
+      Save chosen budget.
+    */
+
+    setMonthlyBudget(
+      value
     );
+
+    if (user?.email) {
+      localStorage.setItem(
+        budgetStorageKey(
+          user.email
+        ),
+        String(value)
+      );
+
+      /*
+        VERY IMPORTANT:
+
+        User has now explicitly
+        set a budget.
+      */
+
+      localStorage.setItem(
+        budgetSetStorageKey(
+          user.email
+        ),
+        "true"
+      );
+    }
+
+    e.currentTarget.reset();
   };
 
-  /* =========================
+  /* =======================================================
      DOWNLOAD BILL
-  ========================= */
+  ======================================================= */
 
   const downloadBill = (
     transaction
   ) => {
-    const typeText =
+    const type =
       transaction.type ===
       "income"
         ? "Income"
@@ -819,51 +1671,98 @@ function App() {
 
     const html = `
 <!DOCTYPE html>
+
 <html>
+
 <head>
+
 <meta charset="UTF-8">
-<title>Transaction Bill</title>
+
+<title>
+Transaction Bill
+</title>
 
 <style>
+
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f7fb;
-  padding: 40px;
-  color: #111827;
+  font-family:
+    Arial,
+    sans-serif;
+
+  background:
+    #f4f7fb;
+
+  padding:
+    40px;
+
+  color:
+    #111827;
 }
 
 .bill {
-  max-width: 650px;
-  margin: auto;
-  background: white;
-  padding: 35px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
+  max-width:
+    650px;
+
+  margin:
+    auto;
+
+  background:
+    white;
+
+  padding:
+    35px;
+
+  border-radius:
+    16px;
+
+  border:
+    1px solid #e5e7eb;
 }
 
 h1 {
-  text-align: center;
+  text-align:
+    center;
 }
 
-.sub {
-  text-align: center;
-  color: #6b7280;
-  margin-bottom: 30px;
+.subtitle {
+  text-align:
+    center;
+
+  color:
+    #64748b;
+
+  margin-bottom:
+    30px;
 }
 
 .row {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 16px 0;
-  border-bottom: 1px solid #e5e7eb;
+  display:
+    flex;
+
+  justify-content:
+    space-between;
+
+  padding:
+    16px 0;
+
+  border-bottom:
+    1px solid #e5e7eb;
 }
 
 .footer {
-  text-align: center;
-  color: #6b7280;
-  margin-top: 30px;
+  text-align:
+    center;
+
+  margin-top:
+    30px;
+
+  color:
+    #64748b;
+
+  font-size:
+    13px;
 }
+
 </style>
 
 </head>
@@ -873,52 +1772,72 @@ h1 {
 <div class="bill">
 
 <h1>
-Personal Expense Tracker
+💰 Personal Expense Tracker
 </h1>
 
-<div class="sub">
+<div class="subtitle">
 Transaction Bill
 </div>
 
 <div class="row">
-<strong>Description</strong>
+<strong>
+Description
+</strong>
+
 <span>
-${escapeHtml(
-  transaction.description
-)}
+${transaction.description}
 </span>
+
 </div>
 
 <div class="row">
-<strong>Amount</strong>
+
+<strong>
+Amount
+</strong>
+
 <span>
-${money(
+${formatMoney(
   transaction.amount
 )}
 </span>
+
 </div>
 
 <div class="row">
-<strong>Category</strong>
+
+<strong>
+Category
+</strong>
+
 <span>
-${escapeHtml(
-  transaction.category
-)}
+${transaction.category}
 </span>
+
 </div>
 
 <div class="row">
-<strong>Type</strong>
+
+<strong>
+Type
+</strong>
+
 <span>
-${typeText}
+${type}
 </span>
+
 </div>
 
 <div class="row">
-<strong>Date</strong>
+
+<strong>
+Date
+</strong>
+
 <span>
 ${transaction.date}
 </span>
+
 </div>
 
 <div class="footer">
@@ -928,6 +1847,7 @@ Generated by Personal Expense Tracker
 </div>
 
 </body>
+
 </html>
 `;
 
@@ -935,7 +1855,8 @@ Generated by Personal Expense Tracker
       new Blob(
         [html],
         {
-          type: "text/html",
+          type:
+            "text/html",
         }
       );
 
@@ -952,18 +1873,26 @@ Generated by Personal Expense Tracker
     link.href = url;
 
     link.download =
-      `transaction-bill-${transaction.id}.html`;
+      `transaction-${transaction.id}.html`;
+
+    document.body.appendChild(
+      link
+    );
 
     link.click();
+
+    document.body.removeChild(
+      link
+    );
 
     URL.revokeObjectURL(
       url
     );
   };
 
-  /* =====================================================
+  /* =======================================================
      LOGIN PAGE
-  ===================================================== */
+  ======================================================= */
 
   if (page === "login") {
     return (
@@ -972,7 +1901,7 @@ Generated by Personal Expense Tracker
         <div className="auth-card">
 
           <div className="auth-icon">
-            🔐
+            💰
           </div>
 
           <h1>
@@ -980,10 +1909,15 @@ Generated by Personal Expense Tracker
           </h1>
 
           <p className="auth-subtitle">
-            Sign in to manage your expenses
+            Sign in to manage your
+            personal finances
           </p>
 
-          <form onSubmit={handleLogin}>
+          <form
+            onSubmit={
+              handleLogin
+            }
+          >
 
             <div className="form-field">
 
@@ -998,11 +1932,13 @@ Generated by Personal Expense Tracker
                   loginData.email
                 }
                 onChange={(e) =>
-                  setLoginData({
-                    ...loginData,
-                    email:
-                      e.target.value,
-                  })
+                  setLoginData(
+                    {
+                      ...loginData,
+                      email:
+                        e.target.value,
+                    }
+                  )
                 }
                 required
               />
@@ -1015,97 +1951,78 @@ Generated by Personal Expense Tracker
                 Password
               </label>
 
-              <input
-                type="password"
-                placeholder="Enter your password"
-                value={
-                  loginData.password
-                }
-                onChange={(e) =>
-                  setLoginData({
-                    ...loginData,
-                    password:
-                      e.target.value,
-                  })
-                }
-                required
-              />
+              <div className="password-input-wrapper">
+                <input
+                  type={
+                    showLoginPassword
+                      ? "text"
+                      : "password"
+                  }
+                  placeholder="Enter your password"
+                  value={
+                    loginData.password
+                  }
+                  onChange={(e) =>
+                    setLoginData(
+                      {
+                        ...loginData,
+                        password:
+                          e.target.value,
+                      }
+                    )
+                  }
+                  required
+                />
+
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() =>
+                    setShowLoginPassword(
+                      (previous) => !previous
+                    )
+                  }
+                  aria-label={
+                    showLoginPassword
+                      ? "Hide password"
+                      : "Show password"
+                  }
+                  title={
+                    showLoginPassword
+                      ? "Hide password"
+                      : "Show password"
+                  }
+                >
+                  {showLoginPassword
+                    ? "🙈"
+                    : "👁️"}
+                </button>
+              </div>
 
             </div>
 
-            <div
-              className="auth-options"
-              style={{
-                display:
-                  "flex",
-                flexDirection:
-                  "row",
-                gap: "15px",
-                width:
-                  "100%",
-                marginTop:
-                  "25px",
-              }}
+            <button
+              className="primary-auth-button"
+              type="submit"
             >
-
-              <button
-                type="submit"
-                style={{
-                  flex: "1",
-                  padding:
-                    "14px 10px",
-                  borderRadius:
-                    "10px",
-                  fontSize:
-                    "16px",
-                  fontWeight:
-                    "700",
-                  cursor:
-                    "pointer",
-                  background:
-                    "#2563eb",
-                  color:
-                    "#ffffff",
-                  border:
-                    "2px solid #2563eb",
-                }}
-              >
-                🔐 Sign In
-              </button>
-
-              <button
-                type="button"
-                style={{
-                  flex: "1",
-                  padding:
-                    "14px 10px",
-                  borderRadius:
-                    "10px",
-                  fontSize:
-                    "16px",
-                  fontWeight:
-                    "700",
-                  cursor:
-                    "pointer",
-                  background:
-                    "#eef4ff",
-                  color:
-                    "#2563eb",
-                  border:
-                    "2px solid #2563eb",
-                }}
-                onClick={() =>
-                  setPage(
-                    "signup"
-                  )
-                }
-              >
-                👤 Create Account
-              </button>
-
-            </div>
+              🔐 Sign In
+            </button>
 
           </form>
+
+          <div className="auth-divider">
+            Don't have an account?
+          </div>
+
+          <button
+            className="secondary-auth-button"
+            type="button"
+            onClick={() =>
+              setPage("signup")
+            }
+          >
+            👤 Create Account
+          </button>
 
         </div>
 
@@ -1113,23 +2030,11 @@ Generated by Personal Expense Tracker
     );
   }
 
-  /* =====================================================
+  /* =======================================================
      SIGNUP PAGE
-  ===================================================== */
+  ======================================================= */
 
   if (page === "signup") {
-    const setSignup = (
-      key,
-      value
-    ) => {
-      setSignupData(
-        (previous) => ({
-          ...previous,
-          [key]: value,
-        })
-      );
-    };
-
     return (
       <div className="auth-page">
 
@@ -1144,14 +2049,20 @@ Generated by Personal Expense Tracker
           </h1>
 
           <p className="auth-subtitle">
-            Enter your details to get started
+            Enter your details to
+            get started
           </p>
 
-          <form onSubmit={handleSignup}>
+          <form
+            onSubmit={
+              handleSignup
+            }
+          >
 
             <div className="form-grid">
 
               <div className="form-field">
+
                 <label>
                   Name *
                 </label>
@@ -1163,16 +2074,21 @@ Generated by Personal Expense Tracker
                     signupData.name
                   }
                   onChange={(e) =>
-                    setSignup(
-                      "name",
-                      e.target.value
+                    setSignupData(
+                      {
+                        ...signupData,
+                        name:
+                          e.target.value,
+                      }
                     )
                   }
                   required
                 />
+
               </div>
 
               <div className="form-field">
+
                 <label>
                   Gender
                 </label>
@@ -1182,28 +2098,38 @@ Generated by Personal Expense Tracker
                     signupData.gender
                   }
                   onChange={(e) =>
-                    setSignup(
-                      "gender",
-                      e.target.value
+                    setSignupData(
+                      {
+                        ...signupData,
+                        gender:
+                          e.target.value,
+                      }
                     )
                   }
                 >
+
                   <option value="">
                     Select gender
                   </option>
+
                   <option value="Male">
                     Male
                   </option>
+
                   <option value="Female">
                     Female
                   </option>
+
                   <option value="Other">
                     Other
                   </option>
+
                 </select>
+
               </div>
 
               <div className="form-field">
+
                 <label>
                   Age
                 </label>
@@ -1217,15 +2143,20 @@ Generated by Personal Expense Tracker
                     signupData.age
                   }
                   onChange={(e) =>
-                    setSignup(
-                      "age",
-                      e.target.value
+                    setSignupData(
+                      {
+                        ...signupData,
+                        age:
+                          e.target.value,
+                      }
                     )
                   }
                 />
+
               </div>
 
               <div className="form-field">
+
                 <label>
                   Occupation
                 </label>
@@ -1235,43 +2166,58 @@ Generated by Personal Expense Tracker
                     signupData.occupation
                   }
                   onChange={(e) =>
-                    setSignup(
-                      "occupation",
-                      e.target.value
+                    setSignupData(
+                      {
+                        ...signupData,
+                        occupation:
+                          e.target.value,
+                      }
                     )
                   }
                 >
+
                   <option value="">
                     Select occupation
                   </option>
-                  <option value="Student">
+
+                  <option>
                     Student
                   </option>
-                  <option value="Employee">
+
+                  <option>
                     Employee
                   </option>
-                  <option value="Business">
+
+                  <option>
                     Business
                   </option>
-                  <option value="Freelancer">
+
+                  <option>
                     Freelancer
                   </option>
-                  <option value="Teacher">
+
+                  <option>
                     Teacher
                   </option>
-                  <option value="Doctor">
+
+                  <option>
                     Doctor
                   </option>
-                  <option value="Engineer">
+
+                  <option>
                     Engineer
                   </option>
-                  <option value="Other">
+
+                  <option>
                     Other
                   </option>
+
                 </select>
+
               </div>
 
               <div className="form-field">
+
                 <label>
                   Email *
                 </label>
@@ -1283,132 +2229,121 @@ Generated by Personal Expense Tracker
                     signupData.email
                   }
                   onChange={(e) =>
-                    setSignup(
-                      "email",
-                      e.target.value
+                    setSignupData(
+                      {
+                        ...signupData,
+                        email:
+                          e.target.value,
+                      }
                     )
                   }
                   required
                 />
+
               </div>
 
               <div className="form-field">
+
                 <label>
                   Phone Number *
                 </label>
 
                 <input
                   type="tel"
-                  placeholder="Enter 10-digit phone number"
+                  placeholder="Enter phone number"
                   value={
                     signupData.number
                   }
                   onChange={(e) =>
-                    setSignup(
-                      "number",
-                      e.target.value
+                    setSignupData(
+                      {
+                        ...signupData,
+                        number:
+                          e.target.value,
+                      }
                     )
                   }
                   required
                 />
+
               </div>
 
               <div className="form-field full-width">
+
                 <label>
                   Password *
                 </label>
 
-                <input
-                  type="password"
-                  placeholder="Create a password"
-                  value={
-                    signupData.password
-                  }
-                  onChange={(e) =>
-                    setSignup(
-                      "password",
-                      e.target.value
-                    )
-                  }
-                  required
-                />
+                <div className="password-input-wrapper">
+                  <input
+                    type={
+                      showSignupPassword
+                        ? "text"
+                        : "password"
+                    }
+                    placeholder="Create a password"
+                    value={
+                      signupData.password
+                    }
+                    onChange={(e) =>
+                      setSignupData(
+                        {
+                          ...signupData,
+                          password:
+                            e.target.value,
+                        }
+                      )
+                    }
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() =>
+                      setShowSignupPassword(
+                        (previous) => !previous
+                      )
+                    }
+                    aria-label={
+                      showSignupPassword
+                        ? "Hide password"
+                        : "Show password"
+                    }
+                    title={
+                      showSignupPassword
+                        ? "Hide password"
+                        : "Show password"
+                    }
+                  >
+                    {showSignupPassword
+                      ? "🙈"
+                      : "👁️"}
+                  </button>
+                </div>
+
               </div>
 
             </div>
 
-            <div
-              style={{
-                display:
-                  "flex",
-                gap:
-                  "15px",
-                width:
-                  "100%",
-                marginTop:
-                  "25px",
-              }}
+            <button
+              className="primary-auth-button"
+              type="submit"
             >
-
-              <button
-                type="submit"
-                style={{
-                  flex:
-                    "1",
-                  padding:
-                    "14px 10px",
-                  borderRadius:
-                    "10px",
-                  fontSize:
-                    "16px",
-                  fontWeight:
-                    "700",
-                  cursor:
-                    "pointer",
-                  background:
-                    "#2563eb",
-                  color:
-                    "#ffffff",
-                  border:
-                    "2px solid #2563eb",
-                }}
-              >
-                👤 Create Account
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  setPage(
-                    "login"
-                  )
-                }
-                style={{
-                  flex:
-                    "1",
-                  padding:
-                    "14px 10px",
-                  borderRadius:
-                    "10px",
-                  fontSize:
-                    "16px",
-                  fontWeight:
-                    "700",
-                  cursor:
-                    "pointer",
-                  background:
-                    "#eef4ff",
-                  color:
-                    "#2563eb",
-                  border:
-                    "2px solid #2563eb",
-                }}
-              >
-                🔐 Sign In
-              </button>
-
-            </div>
+              👤 Create Account
+            </button>
 
           </form>
+
+          <button
+            className="secondary-auth-button"
+            type="button"
+            onClick={() =>
+              setPage("login")
+            }
+          >
+            🔐 Sign In
+          </button>
 
         </div>
 
@@ -1416,9 +2351,9 @@ Generated by Personal Expense Tracker
     );
   }
 
-  /* =====================================================
+  /* =======================================================
      PROFILE
-  ===================================================== */
+  ======================================================= */
 
   if (page === "profile") {
     return (
@@ -1439,29 +2374,44 @@ Generated by Personal Expense Tracker
             </h1>
 
             <p>
-              Manage your expenses easily
+              Manage your money smarter
             </p>
 
           </div>
 
-          <button
-            className="profile-btn"
-            onClick={() =>
-              setPage(
-                "dashboard"
-              )
-            }
-          >
-            👤{" "}
-            {user?.name ||
-              "Profile"}
-          </button>
+          <div className="header-actions">
+
+            <button
+              className="theme-toggle"
+              onClick={
+                toggleTheme
+              }
+              type="button"
+            >
+              {darkMode
+                ? "☀️ Light Mode"
+                : "🌙 Dark Mode"}
+            </button>
+
+            <button
+              className="profile-btn"
+              onClick={() =>
+                setPage(
+                  "dashboard"
+                )
+              }
+              type="button"
+            >
+              ← Dashboard
+            </button>
+
+          </div>
 
         </header>
 
-        <main className="profile-container">
+        <main className="expense-area">
 
-          <div className="profile-card">
+          <section className="card profile-card">
 
             <div className="profile-large-icon">
               👤
@@ -1471,7 +2421,7 @@ Generated by Personal Expense Tracker
               {user?.name}
             </h2>
 
-            <p className="profile-title">
+            <p>
               Your Profile
             </p>
 
@@ -1479,7 +2429,7 @@ Generated by Personal Expense Tracker
 
               <div>
                 <strong>
-                  👤 Name
+                  Name
                 </strong>
 
                 <span>
@@ -1490,7 +2440,7 @@ Generated by Personal Expense Tracker
 
               <div>
                 <strong>
-                  ⚧ Gender
+                  Gender
                 </strong>
 
                 <span>
@@ -1501,7 +2451,7 @@ Generated by Personal Expense Tracker
 
               <div>
                 <strong>
-                  🎂 Age
+                  Age
                 </strong>
 
                 <span>
@@ -1512,7 +2462,7 @@ Generated by Personal Expense Tracker
 
               <div>
                 <strong>
-                  💼 Occupation
+                  Occupation
                 </strong>
 
                 <span>
@@ -1523,7 +2473,7 @@ Generated by Personal Expense Tracker
 
               <div>
                 <strong>
-                  📧 Email
+                  Email
                 </strong>
 
                 <span>
@@ -1534,7 +2484,7 @@ Generated by Personal Expense Tracker
 
               <div>
                 <strong>
-                  📱 Phone
+                  Phone
                 </strong>
 
                 <span>
@@ -1554,18 +2504,7 @@ Generated by Personal Expense Tracker
               🚪 Logout
             </button>
 
-            <button
-              className="back-dashboard-btn"
-              onClick={() =>
-                setPage(
-                  "dashboard"
-                )
-              }
-            >
-              ← Back to Dashboard
-            </button>
-
-          </div>
+          </section>
 
         </main>
 
@@ -1573,9 +2512,9 @@ Generated by Personal Expense Tracker
     );
   }
 
-  /* =====================================================
+  /* =======================================================
      DASHBOARD
-  ===================================================== */
+  ======================================================= */
 
   return (
     <div
@@ -1585,6 +2524,10 @@ Generated by Personal Expense Tracker
           : ""
       }`}
     >
+
+      {/* =================================================
+          HEADER
+      ================================================= */}
 
       <header className="top-header">
 
@@ -1607,6 +2550,7 @@ Generated by Personal Expense Tracker
             onClick={
               toggleTheme
             }
+            type="button"
           >
             {darkMode
               ? "☀️ Light Mode"
@@ -1616,10 +2560,9 @@ Generated by Personal Expense Tracker
           <button
             className="profile-btn"
             onClick={() =>
-              setPage(
-                "profile"
-              )
+              setPage("profile")
             }
+            type="button"
           >
             👤{" "}
             {user?.name ||
@@ -1630,16 +2573,13 @@ Generated by Personal Expense Tracker
 
       </header>
 
-      <main
-        className="expense-area"
-        id="reportArea"
-      >
+      <main className="expense-area">
 
-        {/* =========================
+        {/* =================================================
             WELCOME
-        ========================= */}
+        ================================================= */}
 
-        <div className="welcome-card">
+        <section className="welcome-card">
 
           <h2>
             Welcome,{" "}
@@ -1652,696 +2592,278 @@ Generated by Personal Expense Tracker
             personal expenses.
           </p>
 
-        </div>
+        </section>
 
-        {/* =========================
-            TOTAL SUMMARY
-            ONE BELOW ANOTHER
-        ========================= */}
+        {/* =================================================
+            SUMMARY
+        ================================================= */}
 
-        <section
-          className="summary-grid"
-          style={{
-            display:
-              "grid",
-            gridTemplateColumns:
-              "1fr",
-            gap:
-              "20px",
-            marginBottom:
-              "28px",
-          }}
-        >
+        <section className="summary-grid">
 
-          <div
-            style={{
-              minHeight:
-                "140px",
-              padding:
-                "28px",
-              borderRadius:
-                "18px",
-              border:
-                "2px solid #334155",
-              background:
-                "#111827",
-              boxSizing:
-                "border-box",
-            }}
-          >
+          <div className="summary-card balance-card">
 
-            <h3>
-              Total Balance
-            </h3>
+            <div className="summary-icon">
+              💰
+            </div>
 
-            <p
-              style={{
-                fontSize:
-                  "32px",
-                fontWeight:
-                  "800",
-                margin:
-                  "10px 0 0",
-                color:
-                  "#ffffff",
-              }}
-            >
-              {money(balance)}
-            </p>
+            <div className="summary-content">
+
+              <span>
+                Total Balance
+              </span>
+
+              <strong>
+                {formatMoney(
+                  totalBalance
+                )}
+              </strong>
+
+            </div>
 
           </div>
 
-          <div
-            style={{
-              minHeight:
-                "140px",
-              padding:
-                "28px",
-              borderRadius:
-                "18px",
-              border:
-                "2px solid #334155",
-              background:
-                "#111827",
-              boxSizing:
-                "border-box",
-            }}
-          >
+          <div className="summary-card income-card">
 
-            <h3>
-              Total Income
-            </h3>
+            <div className="summary-icon">
+              📈
+            </div>
 
-            <p
-              style={{
-                fontSize:
-                  "32px",
-                fontWeight:
-                  "800",
-                margin:
-                  "10px 0 0",
-                color:
-                  "#ffffff",
-              }}
-            >
-              {money(
-                totalIncome
-              )}
-            </p>
+            <div className="summary-content">
+
+              <span>
+                Total Income
+              </span>
+
+              <strong>
+                {formatMoney(
+                  totalIncome
+                )}
+              </strong>
+
+            </div>
 
           </div>
 
-          <div
-            style={{
-              minHeight:
-                "140px",
-              padding:
-                "28px",
-              borderRadius:
-                "18px",
-              border:
-                "2px solid #334155",
-              background:
-                "#111827",
-              boxSizing:
-                "border-box",
-            }}
-          >
+          <div className="summary-card expense-card">
 
-            <h3>
-              Total Expenses
-            </h3>
+            <div className="summary-icon">
+              📉
+            </div>
 
-            <p
-              style={{
-                fontSize:
-                  "32px",
-                fontWeight:
-                  "800",
-                margin:
-                  "10px 0 0",
-                color:
-                  "#ffffff",
-              }}
-            >
-              {money(
-                totalExpenses
-              )}
-            </p>
+            <div className="summary-content">
+
+              <span>
+                Total Expenses
+              </span>
+
+              <strong>
+                {formatMoney(
+                  totalExpenses
+                )}
+              </strong>
+
+            </div>
 
           </div>
 
         </section>
 
-        {/* =========================
+        {/* =================================================
             MONTHLY OVERVIEW
-            2 COLUMNS
-        ========================= */}
+        ================================================= */}
 
-        <section className="card">
+        <section className="card monthly-overview-card">
 
-          <div className="section-header">
+          <div className="section-heading">
 
             <h2>
               📅 Monthly Overview
             </h2>
+
+            <p>
+              Analyze your finances
+              for a specific month
+            </p>
+
+          </div>
+
+          <div className="month-selector">
+
+            <label>
+              Select Month
+            </label>
 
             <input
               type="month"
               value={
                 selectedMonth
               }
-              onChange={(e) =>
-                setSelectedMonth(
-                  e.target.value
-                )
-              }
+              onChange={(e) => {
+                const month = e.target.value;
+
+                setSelectedMonth(month);
+
+                /*
+                  When adding a NEW transaction, changing the
+                  Monthly Overview month also changes the default
+                  transaction date to the first day of that month.
+
+                  While editing, keep the existing transaction date
+                  until the user deliberately changes it.
+                */
+                if (
+                  editingId === null &&
+                  month
+                ) {
+                  setForm((previous) => ({
+                    ...previous,
+                    date: `${month}-01`,
+                  }));
+                }
+              }}
             />
 
           </div>
 
           <div
+            className="monthly-grid"
             style={{
-              display:
-                "grid",
-              gridTemplateColumns:
-                "repeat(2, minmax(0, 1fr))",
-              gap:
-                "18px",
+              display: "grid",
+              gridTemplateColumns: isMobile
+                ? "1fr"
+                : "repeat(2, minmax(0, 1fr))",
+              gap: isMobile ? "14px" : "18px",
+              width: "100%",
+              minWidth: 0,
             }}
           >
 
-            {/* MONTHLY INCOME */}
+            <div className="monthly-card monthly-income" style={{ minWidth: 0, width: "100%", boxSizing: "border-box", overflow: "hidden" }}>
 
-            <div
-              style={{
-                minHeight:
-                  "145px",
-                padding:
-                  "24px",
-                borderRadius:
-                  "18px",
-                border:
-                  "2px solid #00d084",
-                background:
-                  "#062e1f",
-                display:
-                  "flex",
-                alignItems:
-                  "center",
-                gap:
-                  "20px",
-                boxSizing:
-                  "border-box",
-              }}
-            >
-
-              <div
-                style={{
-                  width:
-                    "64px",
-                  height:
-                    "64px",
-                  minWidth:
-                    "64px",
-                  borderRadius:
-                    "50%",
-                  background:
-                    "#0b663f",
-                  display:
-                    "flex",
-                  alignItems:
-                    "center",
-                  justifyContent:
-                    "center",
-                  fontSize:
-                    "30px",
-                }}
-              >
+              <div className="monthly-icon">
                 📈
               </div>
 
-              <div>
-                <span
-                  style={{
-                    display:
-                      "block",
-                    color:
-                      "#94a3b8",
-                    fontSize:
-                      "18px",
-                    fontWeight:
-                      "700",
-                    marginBottom:
-                      "10px",
-                  }}
-                >
+              <div className="monthly-content" style={{ minWidth: 0, flex: 1, width: "100%" }}>
+
+                <span>
                   Monthly Income
                 </span>
 
-                <strong
-                  style={{
-                    color:
-                      "#ffffff",
-                    fontSize:
-                      "29px",
-                  }}
-                >
-                  {money(
+                <strong>
+                  {formatMoney(
                     monthlyIncome
                   )}
                 </strong>
+
               </div>
 
             </div>
 
-            {/* MONTHLY EXPENSES */}
+            <div className="monthly-card monthly-expenses" style={{ minWidth: 0, width: "100%", boxSizing: "border-box", overflow: "hidden" }}>
 
-            <div
-              style={{
-                minHeight:
-                  "145px",
-                padding:
-                  "24px",
-                borderRadius:
-                  "18px",
-                border:
-                  "2px solid #ff3038",
-                background:
-                  "#351217",
-                display:
-                  "flex",
-                alignItems:
-                  "center",
-                gap:
-                  "20px",
-                boxSizing:
-                  "border-box",
-              }}
-            >
-
-              <div
-                style={{
-                  width:
-                    "64px",
-                  height:
-                    "64px",
-                  minWidth:
-                    "64px",
-                  borderRadius:
-                    "50%",
-                  background:
-                    "#8f2028",
-                  display:
-                    "flex",
-                  alignItems:
-                    "center",
-                  justifyContent:
-                    "center",
-                  fontSize:
-                    "30px",
-                }}
-              >
+              <div className="monthly-icon">
                 📉
               </div>
 
-              <div>
-                <span
-                  style={{
-                    display:
-                      "block",
-                    color:
-                      "#94a3b8",
-                    fontSize:
-                      "18px",
-                    fontWeight:
-                      "700",
-                    marginBottom:
-                      "10px",
-                  }}
-                >
+              <div className="monthly-content" style={{ minWidth: 0, flex: 1, width: "100%" }}>
+
+                <span>
                   Monthly Expenses
                 </span>
 
-                <strong
-                  style={{
-                    color:
-                      "#ffffff",
-                    fontSize:
-                      "29px",
-                  }}
-                >
-                  {money(
+                <strong>
+                  {formatMoney(
                     monthlyExpenses
                   )}
                 </strong>
+
               </div>
 
             </div>
 
-            {/* SAVINGS */}
+            <div className="monthly-card monthly-savings" style={{ minWidth: 0, width: "100%", boxSizing: "border-box", overflow: "hidden" }}>
 
-            <div
-              style={{
-                minHeight:
-                  "145px",
-                padding:
-                  "24px",
-                borderRadius:
-                  "18px",
-                border:
-                  "2px solid #2583ff",
-                background:
-                  "#10284d",
-                display:
-                  "flex",
-                alignItems:
-                  "center",
-                gap:
-                  "20px",
-                boxSizing:
-                  "border-box",
-              }}
-            >
-
-              <div
-                style={{
-                  width:
-                    "64px",
-                  height:
-                    "64px",
-                  minWidth:
-                    "64px",
-                  borderRadius:
-                    "50%",
-                  background:
-                    "#174ca3",
-                  display:
-                    "flex",
-                  alignItems:
-                    "center",
-                  justifyContent:
-                    "center",
-                  fontSize:
-                    "30px",
-                }}
-              >
+              <div className="monthly-icon">
                 🐷
               </div>
 
-              <div>
-                <span
-                  style={{
-                    display:
-                      "block",
-                    color:
-                      "#94a3b8",
-                    fontSize:
-                      "18px",
-                    fontWeight:
-                      "700",
-                    marginBottom:
-                      "10px",
-                  }}
-                >
+              <div className="monthly-content" style={{ minWidth: 0, flex: 1, width: "100%" }}>
+
+                <span>
                   Monthly Savings
                 </span>
 
-                <strong
-                  style={{
-                    color:
-                      "#ffffff",
-                    fontSize:
-                      "29px",
-                  }}
-                >
-                  {money(
+                <strong>
+                  {formatMoney(
                     monthlySavings
                   )}
                 </strong>
+
               </div>
 
             </div>
 
-            {/* AVERAGE */}
+            <div className="monthly-card monthly-average" style={{ minWidth: 0, width: "100%", boxSizing: "border-box", overflow: "hidden" }}>
 
-            <div
-              style={{
-                minHeight:
-                  "145px",
-                padding:
-                  "24px",
-                borderRadius:
-                  "18px",
-                border:
-                  "2px solid #914dff",
-                background:
-                  "#21183c",
-                display:
-                  "flex",
-                alignItems:
-                  "center",
-                gap:
-                  "20px",
-                boxSizing:
-                  "border-box",
-              }}
-            >
-
-              <div
-                style={{
-                  width:
-                    "64px",
-                  height:
-                    "64px",
-                  minWidth:
-                    "64px",
-                  borderRadius:
-                    "50%",
-                  background:
-                    "#5221a0",
-                  display:
-                    "flex",
-                  alignItems:
-                    "center",
-                  justifyContent:
-                    "center",
-                  fontSize:
-                    "30px",
-                }}
-              >
+              <div className="monthly-icon">
                 📊
               </div>
 
-              <div>
-                <span
-                  style={{
-                    display:
-                      "block",
-                    color:
-                      "#94a3b8",
-                    fontSize:
-                      "18px",
-                    fontWeight:
-                      "700",
-                    marginBottom:
-                      "10px",
-                  }}
-                >
+              <div className="monthly-content" style={{ minWidth: 0, flex: 1, width: "100%" }}>
+
+                <span>
                   Average Expense
                 </span>
 
-                <strong
-                  style={{
-                    color:
-                      "#ffffff",
-                    fontSize:
-                      "29px",
-                  }}
-                >
-                  {money(
+                <strong>
+                  {formatMoney(
                     Math.round(
                       averageExpense
                     )
                   )}
                 </strong>
+
               </div>
 
             </div>
 
-            {/* SAVINGS RATE */}
+            <div className="monthly-card monthly-rate" style={{ minWidth: 0, width: "100%", boxSizing: "border-box", overflow: "hidden" }}>
 
-            <div
-              style={{
-                minHeight:
-                  "145px",
-                padding:
-                  "24px",
-                borderRadius:
-                  "18px",
-                border:
-                  "2px solid #ffae00",
-                background:
-                  "#2c260d",
-                display:
-                  "flex",
-                alignItems:
-                  "center",
-                gap:
-                  "20px",
-                boxSizing:
-                  "border-box",
-              }}
-            >
-
-              <div
-                style={{
-                  width:
-                    "64px",
-                  height:
-                    "64px",
-                  minWidth:
-                    "64px",
-                  borderRadius:
-                    "50%",
-                  background:
-                    "#824400",
-                  display:
-                    "flex",
-                  alignItems:
-                    "center",
-                  justifyContent:
-                    "center",
-                  fontSize:
-                    "30px",
-                }}
-              >
-                💹
+              <div className="monthly-icon">
+                %
               </div>
 
-              <div>
-                <span
-                  style={{
-                    display:
-                      "block",
-                    color:
-                      "#94a3b8",
-                    fontSize:
-                      "18px",
-                    fontWeight:
-                      "700",
-                    marginBottom:
-                      "10px",
-                  }}
-                >
+              <div className="monthly-content" style={{ minWidth: 0, flex: 1, width: "100%" }}>
+
+                <span>
                   Savings Rate
                 </span>
 
-                <strong
-                  style={{
-                    color:
-                      "#ffffff",
-                    fontSize:
-                      "29px",
-                  }}
-                >
+                <strong>
                   {Math.round(
                     savingsRate
                   )}
                   %
                 </strong>
+
               </div>
 
             </div>
 
-            {/* HIGHEST CATEGORY */}
+            <div className="monthly-card monthly-category" style={{ minWidth: 0, width: "100%", boxSizing: "border-box", overflow: "hidden" }}>
 
-            <div
-              style={{
-                minHeight:
-                  "145px",
-                padding:
-                  "24px",
-                borderRadius:
-                  "18px",
-                border:
-                  "2px solid #00d6cc",
-                background:
-                  "#082e2c",
-                display:
-                  "flex",
-                alignItems:
-                  "center",
-                gap:
-                  "20px",
-                boxSizing:
-                  "border-box",
-                overflow:
-                  "hidden",
-              }}
-            >
-
-              <div
-                style={{
-                  width:
-                    "64px",
-                  height:
-                    "64px",
-                  minWidth:
-                    "64px",
-                  borderRadius:
-                    "50%",
-                  background:
-                    "#075f59",
-                  display:
-                    "flex",
-                  alignItems:
-                    "center",
-                  justifyContent:
-                    "center",
-                  fontSize:
-                    "30px",
-                }}
-              >
+              <div className="monthly-icon">
                 🏆
               </div>
 
-              <div
-                style={{
-                  minWidth:
-                    "0",
-                  overflow:
-                    "hidden",
-                }}
-              >
+              <div className="monthly-content" style={{ minWidth: 0, flex: 1, width: "100%" }}>
 
-                <span
-                  style={{
-                    display:
-                      "block",
-                    color:
-                      "#94a3b8",
-                    fontSize:
-                      "18px",
-                    fontWeight:
-                      "700",
-                    marginBottom:
-                      "10px",
-                  }}
-                >
-                  Highest Category
+                <span>
+                  Highest Spending Category
                 </span>
 
-                <strong
-                  style={{
-                    color:
-                      "#ffffff",
-                    fontSize:
-                      "25px",
-                    overflowWrap:
-                      "anywhere",
-                  }}
-                >
+                <strong>
                   {highestCategory}
                 </strong>
 
@@ -2353,221 +2875,70 @@ Generated by Personal Expense Tracker
 
         </section>
 
-        {/* =========================
+        {/* =================================================
             MONTHLY BUDGET
-        ========================= */}
+        ================================================= */}
 
-        <section className="card">
+        <section className="card budget-card">
 
-          <h2>
-            💰 Monthly Budget
-          </h2>
+          <div className="section-heading">
 
-          <div
-            style={{
-              display:
-                "grid",
-              gridTemplateColumns:
-                "repeat(2, minmax(0, 1fr))",
-              gap:
-                "18px",
-            }}
-          >
+            <h2>
+              💰 Monthly Budget
+            </h2>
 
-            {/* BUDGET */}
+          </div>
 
-            <div
-              style={{
-                minHeight:
-                  "180px",
-                padding:
-                  "28px",
-                borderRadius:
-                  "18px",
-                border:
-                  "2px solid #2676ff",
-                background:
-                  "#10284d",
-                display:
-                  "flex",
-                flexDirection:
-                  "column",
-                justifyContent:
-                  "center",
-                boxSizing:
-                  "border-box",
-              }}
-            >
+          <div className="budget-grid">
 
-              <span
-                style={{
-                  fontSize:
-                    "32px",
-                }}
-              >
+            <div className="budget-box budget-box-blue">
+
+              <div className="budget-icon">
                 💳
-              </span>
+              </div>
 
-              <span
-                style={{
-                  color:
-                    "#94a3b8",
-                  fontSize:
-                    "18px",
-                  fontWeight:
-                    "700",
-                  marginTop:
-                    "10px",
-                }}
-              >
+              <span>
                 Budget
               </span>
 
-              <strong
-                style={{
-                  color:
-                    "#5aa0ff",
-                  fontSize:
-                    "34px",
-                  marginTop:
-                    "8px",
-                }}
-              >
-                {money(
+              <strong>
+                {formatMoney(
                   monthlyBudget
                 )}
               </strong>
 
             </div>
 
-            {/* SPENT */}
+            <div className="budget-box budget-box-red">
 
-            <div
-              style={{
-                minHeight:
-                  "180px",
-                padding:
-                  "28px",
-                borderRadius:
-                  "18px",
-                border:
-                  "2px solid #e3294d",
-                background:
-                  "#351217",
-                display:
-                  "flex",
-                flexDirection:
-                  "column",
-                justifyContent:
-                  "center",
-                boxSizing:
-                  "border-box",
-              }}
-            >
-
-              <span
-                style={{
-                  fontSize:
-                    "32px",
-                }}
-              >
+              <div className="budget-icon">
                 💸
-              </span>
+              </div>
 
-              <span
-                style={{
-                  color:
-                    "#94a3b8",
-                  fontSize:
-                    "18px",
-                  fontWeight:
-                    "700",
-                  marginTop:
-                    "10px",
-                }}
-              >
+              <span>
                 Spent
               </span>
 
-              <strong
-                style={{
-                  color:
-                    "#ff7189",
-                  fontSize:
-                    "34px",
-                  marginTop:
-                    "8px",
-                }}
-              >
-                {money(
-                  monthlyExpenses
+              <strong>
+                {formatMoney(
+                  budgetSpent
                 )}
               </strong>
 
             </div>
 
-            {/* REMAINING */}
+            <div className="budget-box budget-box-green">
 
-            <div
-              style={{
-                gridColumn:
-                  "1 / -1",
-                minHeight:
-                  "180px",
-                padding:
-                  "28px",
-                borderRadius:
-                  "18px",
-                border:
-                  "2px solid #00a978",
-                background:
-                  "#073329",
-                display:
-                  "flex",
-                flexDirection:
-                  "column",
-                justifyContent:
-                  "center",
-                boxSizing:
-                  "border-box",
-              }}
-            >
-
-              <span
-                style={{
-                  fontSize:
-                    "32px",
-                }}
-              >
+              <div className="budget-icon">
                 💰
-              </span>
+              </div>
 
-              <span
-                style={{
-                  color:
-                    "#94a3b8",
-                  fontSize:
-                    "18px",
-                  fontWeight:
-                    "700",
-                  marginTop:
-                    "10px",
-                }}
-              >
+              <span>
                 Remaining
               </span>
 
-              <strong
-                style={{
-                  color:
-                    "#35e58b",
-                  fontSize:
-                    "34px",
-                  marginTop:
-                    "8px",
-                }}
-              >
-                {money(
+              <strong>
+                {formatMoney(
                   budgetRemaining
                 )}
               </strong>
@@ -2576,121 +2947,60 @@ Generated by Personal Expense Tracker
 
           </div>
 
-          {/* PROGRESS */}
-
-          <div
-            style={{
-              height:
-                "18px",
-              marginTop:
-                "24px",
-              borderRadius:
-                "999px",
-              background:
-                "#334155",
-              overflow:
-                "hidden",
-            }}
-          >
+          <div className="budget-progress">
 
             <div
+              className="budget-progress-fill"
               style={{
-                width: `${displayBudgetPercentage}%`,
-                height:
-                  "100%",
-                borderRadius:
-                  "999px",
-                background:
-                  "#3b82f6",
+                width: `${progressWidth}%`,
               }}
             />
 
           </div>
 
-          <p
-            style={{
-              fontSize:
-                "18px",
-              fontWeight:
-                "700",
-            }}
-          >
-            {Math.round(
-              budgetPercentage
-            )}
-            % used
-          </p>
+          <div className="budget-percentage">
 
-          <p
-            style={{
-              padding:
-                "20px",
-              borderRadius:
-                "16px",
-              border:
-                "1px solid #00a978",
-              background:
-                "#073329",
-              color:
-                "#35e58b",
-              fontSize:
-                "18px",
-              fontWeight:
-                "700",
-            }}
+            {monthlyBudget === 0
+              ? "0% used"
+              : `${Math.round(
+                  budgetPercentage
+                )}% used`}
+
+          </div>
+
+          <div
+            className={`budget-status ${
+              monthlyBudget ===
+              0
+                ? "budget-neutral"
+                : budgetRemaining <
+                  0
+                ? "budget-danger"
+                : budgetPercentage >=
+                  80
+                ? "budget-warning"
+                : "budget-success"
+            }`}
           >
-            {monthlyBudget <= 0
-              ? "Set a monthly budget to start tracking"
-              : budgetRemaining < 0
-              ? "You have exceeded your budget"
+
+            {monthlyBudget ===
+            0
+              ? "Set your monthly budget to start tracking your budget."
+              : budgetRemaining <
+                0
+              ? "You have exceeded your budget."
               : budgetPercentage >=
                 80
-              ? "You're close to your budget limit"
-              : "You're within your budget"}
-          </p>
+              ? "You're close to your budget limit."
+              : "You're within your budget."}
 
-          {/* SET BUDGET */}
+          </div>
 
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-
-              const value =
-                Number(
-                  e.currentTarget
-                    .elements
-                    .budget.value
-                );
-
-              if (
-                !value ||
-                value <= 0
-              ) {
-                alert(
-                  "Please enter a budget greater than ₹0."
-                );
-                return;
-              }
-
-              setMonthlyBudget(
-                value
-              );
-
-              localStorage.setItem(
-                "monthlyBudget",
-                String(value)
-              );
-
-              e.currentTarget.reset();
-            }}
-            style={{
-              display:
-                "flex",
-              gap:
-                "14px",
-              marginTop:
-                "20px",
-            }}
+            className="budget-form"
+            onSubmit={
+              handleBudgetSubmit
+            }
           >
 
             <input
@@ -2699,35 +3009,9 @@ Generated by Personal Expense Tracker
               min="1"
               step="1"
               placeholder="Enter monthly budget"
-              style={{
-                flex:
-                  "1",
-              }}
             />
 
-            <button
-              type="submit"
-              style={{
-                minHeight:
-                  "52px",
-                padding:
-                  "14px 24px",
-                background:
-                  "#2563eb",
-                color:
-                  "#ffffff",
-                border:
-                  "2px solid #2563eb",
-                borderRadius:
-                  "10px",
-                fontSize:
-                  "16px",
-                fontWeight:
-                  "700",
-                cursor:
-                  "pointer",
-              }}
-            >
+            <button type="submit">
               Set Budget
             </button>
 
@@ -2735,17 +3019,25 @@ Generated by Personal Expense Tracker
 
         </section>
 
-        {/* =========================
-            ANALYTICS
-        ========================= */}
+        {/* =================================================
+            EXPENSE ANALYTICS
+        ================================================= */}
 
-        <section className="card">
+        <section className="card analytics-card">
 
-          <h2>
-            📊 Expense Analytics
-          </h2>
+          <div className="section-heading">
+
+            <h2>
+              📊 Expense Analytics
+            </h2>
+
+          </div>
 
           <div className="charts-grid">
+
+            {/* ===========================================
+                CATEGORY CHART
+            =========================================== */}
 
             <div className="chart-card">
 
@@ -2757,6 +3049,7 @@ Generated by Personal Expense Tracker
 
                 {categoryChartData.length >
                 0 ? (
+
                   <ResponsiveContainer
                     width="100%"
                     height="100%"
@@ -2772,23 +3065,25 @@ Generated by Personal Expense Tracker
                         nameKey="name"
                         cx="50%"
                         cy="50%"
-                        outerRadius="70%"
-                        label
+                        innerRadius="35%"
+                        outerRadius="68%"
                       >
 
                         {categoryChartData.map(
                           (
-                            entry,
+                            item,
                             index
                           ) => (
                             <Cell
                               key={
-                                entry.name
+                                item.name
                               }
-                              fill={`hsl(${
-                                index *
-                                42
-                              }, 70%, 55%)`}
+                              fill={
+                                CATEGORY_COLORS[
+                                  index %
+                                    CATEGORY_COLORS.length
+                                ]
+                              }
                             />
                           )
                         )}
@@ -2799,7 +3094,7 @@ Generated by Personal Expense Tracker
                         formatter={(
                           value
                         ) =>
-                          money(
+                          formatMoney(
                             value
                           )
                         }
@@ -2810,15 +3105,32 @@ Generated by Personal Expense Tracker
                     </PieChart>
 
                   </ResponsiveContainer>
+
                 ) : (
+
                   <div className="empty-chart">
-                    Add expenses to see the chart.
+
+                    <div>
+                      📊
+                    </div>
+
+                    <p>
+                      Add expenses to
+                      see your category
+                      chart.
+                    </p>
+
                   </div>
+
                 )}
 
               </div>
 
             </div>
+
+            {/* ===========================================
+                INCOME VS EXPENSE
+            =========================================== */}
 
             <div className="chart-card">
 
@@ -2847,13 +3159,18 @@ Generated by Personal Expense Tracker
                       dataKey="name"
                     />
 
-                    <YAxis />
+                    <YAxis
+                      domain={[
+                        0,
+                        "auto",
+                      ]}
+                    />
 
                     <Tooltip
                       formatter={(
                         value
                       ) =>
-                        money(
+                        formatMoney(
                           value
                         )
                       }
@@ -2861,14 +3178,23 @@ Generated by Personal Expense Tracker
 
                     <Bar
                       dataKey="amount"
-                      fill="#2563eb"
                       radius={[
                         8,
                         8,
                         0,
                         0,
                       ]}
-                    />
+                    >
+
+                      <Cell
+                        fill="#22C55E"
+                      />
+
+                      <Cell
+                        fill="#EF4444"
+                      />
+
+                    </Bar>
 
                   </BarChart>
 
@@ -2878,7 +3204,11 @@ Generated by Personal Expense Tracker
 
             </div>
 
-            <div className="chart-card full-width">
+            {/* ===========================================
+                DAILY EXPENSE TREND
+            =========================================== */}
+
+            <div className="chart-card chart-full-width">
 
               <h3>
                 Daily Expense Trend
@@ -2886,57 +3216,59 @@ Generated by Personal Expense Tracker
 
               <div className="chart-container">
 
-                {trendData.length >
-                0 ? (
-                  <ResponsiveContainer
-                    width="100%"
-                    height="100%"
+                <ResponsiveContainer
+                  width="100%"
+                  height="100%"
+                >
+
+                  <LineChart
+                    data={
+                      dailyExpenseData
+                    }
                   >
 
-                    <LineChart
-                      data={
-                        trendData
-                      }
-                    >
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                    />
 
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                      />
+                    <XAxis
+                      dataKey="day"
+                    />
 
-                      <XAxis
-                        dataKey="date"
-                      />
+                    <YAxis
+                      domain={[
+                        0,
+                        "auto",
+                      ]}
+                    />
 
-                      <YAxis />
-
-                      <Tooltip
-                        formatter={(
+                    <Tooltip
+                      formatter={(
+                        value
+                      ) =>
+                        formatMoney(
                           value
-                        ) =>
-                          money(
-                            value
-                          )
-                        }
-                      />
+                        )
+                      }
+                    />
 
-                      <Line
-                        type="monotone"
-                        dataKey="amount"
-                        stroke="#2563eb"
-                        strokeWidth={3}
-                        dot={{
-                          r: 4,
-                        }}
-                      />
+                    <Line
+                      type="monotone"
+                      dataKey="amount"
+                      name="Daily Expenses (₹)"
+                      stroke="#EF4444"
+                      strokeWidth={3}
+                      dot={{
+                        r: 3,
+                      }}
+                      activeDot={{
+                        r: 6,
+                      }}
+                    />
 
-                    </LineChart>
+                  </LineChart>
 
-                  </ResponsiveContainer>
-                ) : (
-                  <div className="empty-chart">
-                    Add expenses to see your daily trend.
-                  </div>
-                )}
+                </ResponsiveContainer>
 
               </div>
 
@@ -2946,17 +3278,21 @@ Generated by Personal Expense Tracker
 
         </section>
 
-        {/* =========================
+        {/* =================================================
             ADD TRANSACTION
-        ========================= */}
+        ================================================= */}
 
         <section className="card">
 
-          <h2>
-            {editingId !== null
-              ? "✏️ Edit Transaction"
-              : "➕ Add Transaction"}
-          </h2>
+          <div className="section-heading">
+
+            <h2>
+              {editingId !== null
+                ? "✏️ Edit Transaction"
+                : "➕ Add Transaction"}
+            </h2>
+
+          </div>
 
           <form
             onSubmit={
@@ -3035,7 +3371,9 @@ Generated by Personal Expense Tracker
                   </option>
 
                   {CATEGORIES.map(
-                    (category) => (
+                    (
+                      category
+                    ) => (
                       <option
                         key={
                           category
@@ -3044,7 +3382,9 @@ Generated by Personal Expense Tracker
                           category
                         }
                       >
-                        {category}
+                        {
+                          category
+                        }
                       </option>
                     )
                   )}
@@ -3110,93 +3450,26 @@ Generated by Personal Expense Tracker
 
             </div>
 
-            {/* BIG BLUE ADD BUTTON */}
-
-            <div
-              style={{
-                display:
-                  "flex",
-                width:
-                  "100%",
-                gap:
-                  "14px",
-                marginTop:
-                  "24px",
-              }}
-            >
+            <div className="transaction-actions">
 
               <button
+                className="primary-button"
                 type="submit"
-                style={{
-                  flex:
-                    "1",
-                  display:
-                    "flex",
-                  alignItems:
-                    "center",
-                  justifyContent:
-                    "center",
-                  minHeight:
-                    "56px",
-                  padding:
-                    "14px 24px",
-                  background:
-                    "#2563eb",
-                  color:
-                    "#ffffff",
-                  border:
-                    "2px solid #2563eb",
-                  borderRadius:
-                    "10px",
-                  fontSize:
-                    "17px",
-                  fontWeight:
-                    "700",
-                  cursor:
-                    "pointer",
-                  boxSizing:
-                    "border-box",
-                  appearance:
-                    "none",
-                  WebkitAppearance:
-                    "none",
-                }}
               >
                 {editingId !== null
-                  ? "✏️ Update Transaction"
-                  : "➕ Add Transaction"}
+                  ? "Update Transaction"
+                  : "Add Transaction"}
               </button>
 
               {editingId !== null && (
                 <button
+                  className="cancel-button"
                   type="button"
                   onClick={
                     cancelEdit
                   }
-                  style={{
-                    flex:
-                      "1",
-                    minHeight:
-                      "56px",
-                    padding:
-                      "14px 24px",
-                    background:
-                      "#e2e8f0",
-                    color:
-                      "#334155",
-                    border:
-                      "2px solid #cbd5e1",
-                    borderRadius:
-                      "10px",
-                    fontSize:
-                      "17px",
-                    fontWeight:
-                      "700",
-                    cursor:
-                      "pointer",
-                  }}
                 >
-                  Cancel Edit
+                  Cancel
                 </button>
               )}
 
@@ -3206,13 +3479,13 @@ Generated by Personal Expense Tracker
 
         </section>
 
-        {/* =========================
+        {/* =================================================
             TRANSACTION HISTORY
-        ========================= */}
+        ================================================= */}
 
         <section className="card">
 
-          <div className="section-header">
+          <div className="section-heading">
 
             <h2>
               📜 Transaction History
@@ -3276,7 +3549,9 @@ Generated by Personal Expense Tracker
               </option>
 
               {CATEGORIES.map(
-                (category) => (
+                (
+                  category
+                ) => (
                   <option
                     key={
                       category
@@ -3285,13 +3560,66 @@ Generated by Personal Expense Tracker
                       category
                     }
                   >
-                    {category}
+                    {
+                      category
+                    }
                   </option>
                 )
               )}
 
             </select>
 
+            <select
+              className="history-month-filter"
+              value={historyMonth}
+              onChange={(e) =>
+                setHistoryMonth(e.target.value)
+              }
+            >
+              <option value="all">
+                All Months
+              </option>
+              <option value="selected">
+                Selected Month ({selectedMonth})
+              </option>
+            </select>
+
+            <select
+              className="history-sort"
+              value={sortOption}
+              onChange={(e) =>
+                setSortOption(e.target.value)
+              }
+            >
+              <option value="newest">
+                Newest First
+              </option>
+              <option value="oldest">
+                Oldest First
+              </option>
+              <option value="amountHigh">
+                Amount: High to Low
+              </option>
+              <option value="amountLow">
+                Amount: Low to High
+              </option>
+              <option value="description">
+                Description: A to Z
+              </option>
+            </select>
+
+          </div>
+
+          <div className="history-summary">
+            <span>
+              Showing <strong>{filteredTransactions.length}</strong> of <strong>{transactions.length}</strong> transactions
+            </span>
+
+            {duplicateIds.size > 0 && (
+              <span className="duplicate-summary">
+                ⚠️ {duplicateIds.size} possible duplicate {duplicateIds.size === 1 ? "entry" : "entries"} detected
+              </span>
+            )}
           </div>
 
           <div className="download-container">
@@ -3307,7 +3635,8 @@ Generated by Personal Expense Tracker
                       String(
                         item.id
                       ) ===
-                      e.target.value
+                      e.target
+                        .value
                   );
 
                 if (
@@ -3325,11 +3654,14 @@ Generated by Personal Expense Tracker
             >
 
               <option value="">
-                Select transaction to download
+                Select transaction
+                to download
               </option>
 
               {transactions.map(
-                (transaction) => (
+                (
+                  transaction
+                ) => (
                   <option
                     key={
                       transaction.id
@@ -3338,13 +3670,15 @@ Generated by Personal Expense Tracker
                       transaction.id
                     }
                   >
-                    {transaction.date}
+                    {
+                      transaction.date
+                    }
                     {" — "}
                     {
                       transaction.description
                     }
                     {" — "}
-                    {money(
+                    {formatMoney(
                       transaction.amount
                     )}
                   </option>
@@ -3353,25 +3687,30 @@ Generated by Personal Expense Tracker
 
             </select>
 
-            <span className="download-hint">
-              Select a transaction above to download its bill
-            </span>
-
           </div>
 
           <div className="transaction-list">
 
             {filteredTransactions.length ===
             0 ? (
-              <p className="empty-message">
+
+              <div className="empty-message">
                 No transactions found.
-              </p>
+              </div>
+
             ) : (
+
               filteredTransactions.map(
-                (transaction) => (
+                (
+                  transaction
+                ) => (
 
                   <div
-                    className="transaction-item"
+                    className={`transaction-item ${
+                      duplicateIds.has(transaction.id)
+                        ? "possible-duplicate"
+                        : ""
+                    }`}
                     key={
                       transaction.id
                     }
@@ -3395,6 +3734,14 @@ Generated by Personal Expense Tracker
                         }
                       </p>
 
+                      {duplicateIds.has(
+                        transaction.id
+                      ) && (
+                        <span className="duplicate-badge">
+                          ⚠️ Possible duplicate
+                        </span>
+                      )}
+
                     </div>
 
                     <div className="transaction-right">
@@ -3413,7 +3760,7 @@ Generated by Personal Expense Tracker
                           ? "+"
                           : "-"}
 
-                        {money(
+                        {formatMoney(
                           transaction.amount
                         )}
 
@@ -3423,6 +3770,7 @@ Generated by Personal Expense Tracker
 
                         <button
                           className="edit-btn"
+                          type="button"
                           onClick={() =>
                             editTransaction(
                               transaction
@@ -3434,6 +3782,7 @@ Generated by Personal Expense Tracker
 
                         <button
                           className="delete-btn"
+                          type="button"
                           onClick={() =>
                             deleteTransaction(
                               transaction.id
@@ -3445,6 +3794,7 @@ Generated by Personal Expense Tracker
 
                         <button
                           className="download-bill-btn"
+                          type="button"
                           onClick={() =>
                             downloadBill(
                               transaction
@@ -3462,6 +3812,7 @@ Generated by Personal Expense Tracker
 
                 )
               )
+
             )}
 
           </div>
