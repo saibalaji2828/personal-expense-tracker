@@ -5159,3 +5159,71 @@ canvas {
     min-height: 54px !important;
   }
 }
+/* =========================
+   MOBILE RESPONSIVE FIX
+   ========================= */
+
+@media (max-width: 600px) {
+
+  /* Monthly overview becomes one column */
+  .monthly-grid {
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+  }
+
+  /* Make monthly cards fit the phone */
+  .monthly-grid > div {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  /* Prevent text from being squeezed */
+  .monthly-grid h3,
+  .monthly-grid p {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+  }
+
+  /* Slightly smaller headings on phones */
+  .monthly-grid h3 {
+    font-size: 18px !important;
+    line-height: 1.25 !important;
+  }
+
+  /* Make values fit comfortably */
+  .monthly-grid p {
+    font-size: 26px !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Summary cards stay full width */
+  .summary-grid {
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+  }
+
+  /* Budget cards stack on phones */
+  .budget-grid {
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+  }
+
+  .budget-grid > div {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Prevent dashboard from overflowing horizontally */
+  .dashboard,
+  .dashboard-content,
+  main {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+}
