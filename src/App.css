@@ -5362,3 +5362,78 @@ canvas {
     text-align: center !important;
   }
 }
+/* =========================================
+   PASSWORD INPUT - CLEAR VISIBLE BORDER
+   ========================================= */
+
+.password-input-wrapper {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+}
+
+.password-input-wrapper input,
+input[type="password"],
+input[type="text"] {
+  border: 1px solid #3f506d !important;
+  border-radius: 12px !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  background: #111827 !important;
+  color: #ffffff !important;
+}
+
+.password-input-wrapper input:focus,
+input[type="password"]:focus,
+input[type="text"]:focus {
+  border: 2px solid #3b82f6 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+}
+
+.password-input-wrapper input::placeholder,
+input[type="password"]::placeholder {
+  color: #8da0bd !important;
+  opacity: 1 !important;
+}
+/* =========================================
+   PASSWORD BOX - STRONG VISIBLE OUTLINE
+   ========================================= */
+
+.auth-card .password-input-wrapper > input,
+.signup-card .password-input-wrapper > input {
+  width: 100% !important;
+  min-height: 62px !important;
+
+  border: 2px solid #64748b !important;
+  border-radius: 14px !important;
+
+  background: #0f172a !important;
+  color: #ffffff !important;
+
+  box-shadow: inset 0 0 0 1px #475569 !important;
+
+  outline: none !important;
+  box-sizing: border-box !important;
+}
+
+/* When the password box is selected */
+.auth-card .password-input-wrapper > input:focus,
+.signup-card .password-input-wrapper > input:focus {
+  border: 2px solid #60a5fa !important;
+
+  box-shadow:
+    0 0 0 3px rgba(96, 165, 250, 0.20),
+    inset 0 0 0 1px #60a5fa !important;
+}
+
+/* Placeholder */
+.auth-card .password-input-wrapper > input::placeholder,
+.signup-card .password-input-wrapper > input::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1 !important;
+}
+/* Add space between password box and Sign In button */
+.auth-card .primary-auth-button {
+  margin-top: 18px !important;
+}
