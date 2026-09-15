@@ -1,0 +1,4371 @@
+/* =========================================
+   GLOBAL
+========================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f1f5f9;
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+}
+
+
+/* =========================================
+   AUTH PAGE
+========================================= */
+
+.auth-page {
+  min-height: 100vh;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 30px 20px;
+
+  overflow-y: auto;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0f172a,
+      #111827,
+      #172554
+    );
+}
+
+
+/* =========================================
+   LOGIN / SIGNUP CARD
+========================================= */
+
+.auth-card,
+.signup-card {
+  width: 100%;
+
+  padding: 35px;
+
+  background: #111827;
+
+  border: 1px solid #263449;
+
+  border-radius: 20px;
+
+  color: white;
+
+  box-shadow:
+    0 25px 60px
+    rgba(0, 0, 0, 0.35);
+}
+
+.auth-card {
+  max-width: 440px;
+  margin-top: 50px;
+  margin-bottom: 30px;
+}
+
+.signup-card {
+  max-width: 760px;
+  margin: 0 auto 30px;
+}
+
+
+/* =========================================
+   AUTH ICON
+========================================= */
+
+.auth-icon {
+  width: 75px;
+  height: 75px;
+
+  margin: 0 auto 18px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 50%;
+
+  background: #172554;
+
+  font-size: 38px;
+}
+
+
+/* =========================================
+   AUTH HEADINGS
+========================================= */
+
+.auth-card h1,
+.signup-card h1 {
+  margin: 0;
+
+  text-align: center;
+
+  color: white;
+
+  font-size: 27px;
+
+  font-weight: 700;
+}
+
+.auth-subtitle {
+  margin: 10px 0 28px;
+
+  text-align: center;
+
+  color: #94a3b8;
+
+  font-size: 15px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   FORMS
+========================================= */
+
+.form-field {
+  width: 100%;
+}
+
+form label {
+  display: block;
+
+  margin: 16px 0 8px;
+
+  color: #f8fafc;
+
+  font-size: 15px;
+
+  font-weight: 600;
+}
+
+input,
+select {
+  width: 100%;
+
+  min-height: 50px;
+
+  padding: 13px 15px;
+
+  border: 1px solid #334155;
+
+  border-radius: 11px;
+
+  outline: none;
+
+  background: #0f172a;
+
+  color: white;
+
+  font-size: 15px;
+}
+
+input::placeholder {
+  color: #64748b;
+}
+
+select {
+  cursor: pointer;
+}
+
+input:focus,
+select:focus {
+  border-color: #3b82f6;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(59, 130, 246, 0.15);
+}
+
+
+/* =========================================
+   SIGNUP GRID
+========================================= */
+
+.form-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  column-gap: 20px;
+
+  row-gap: 2px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.primary-btn {
+  width: 100%;
+
+  min-height: 52px;
+
+  margin-top: 25px;
+
+  padding: 13px 20px;
+
+  border: none;
+
+  border-radius: 11px;
+
+  background: #2563eb;
+
+  color: white;
+
+  font-size: 17px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+
+.primary-btn:hover {
+  background: #1d4ed8;
+
+  transform: translateY(-1px);
+}
+
+.secondary-btn {
+  width: 100%;
+
+  min-height: 50px;
+
+  padding: 13px 20px;
+
+  border: 1px solid #334155;
+
+  border-radius: 11px;
+
+  background: #172554;
+
+  color: #bfdbfe;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.secondary-btn:hover {
+  background: #1e3a8a;
+}
+
+
+/* =========================================
+   AUTH DIVIDER
+========================================= */
+
+.auth-divider {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  margin: 24px 0;
+
+  color: #64748b;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+
+  flex: 1;
+
+  height: 1px;
+
+  background: #334155;
+}
+
+.auth-divider span {
+  padding: 0 12px;
+
+  font-size: 12px;
+}
+
+
+/* =========================================
+   SIGN IN / CREATE ACCOUNT OPTIONS
+   BOX STYLE
+========================================= */
+
+.auth-options {
+  display: flex !important;
+
+  flex-direction: column !important;
+
+  gap: 16px !important;
+
+  width: 100% !important;
+
+  margin-top: 28px !important;
+}
+
+.auth-option-btn {
+  position: relative !important;
+
+  display: flex !important;
+
+  align-items: center !important;
+
+  justify-content: center !important;
+
+  width: 100% !important;
+
+  min-height: 68px !important;
+
+  padding: 16px 22px !important;
+
+  border-radius: 15px !important;
+
+  font-size: 17px !important;
+
+  font-weight: 700 !important;
+
+  cursor: pointer !important;
+
+  box-sizing: border-box !important;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease !important;
+
+  letter-spacing: 0.1px;
+}
+
+.auth-option-btn:hover {
+  transform: translateY(-3px) !important;
+}
+
+.auth-option-btn:active {
+  transform: translateY(-1px) !important;
+}
+
+/* SIGN IN BOX */
+
+.signin-option {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+
+  color: white !important;
+
+  border: 2px solid #60a5fa !important;
+
+  box-shadow:
+    0 8px 22px rgba(37, 99, 235, 0.28) !important;
+}
+
+.signin-option:hover {
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+
+  border-color: #93c5fd !important;
+
+  box-shadow:
+    0 12px 28px rgba(37, 99, 235, 0.38) !important;
+}
+
+/* CREATE ACCOUNT BOX */
+
+.signup-option {
+  background: linear-gradient(135deg, #4c1d95, #312e81) !important;
+
+  color: white !important;
+
+  border: 2px solid #8b5cf6 !important;
+
+  box-shadow:
+    0 8px 22px rgba(124, 58, 237, 0.24) !important;
+}
+
+.signup-option:hover {
+  background: linear-gradient(135deg, #6d28d9, #4338ca) !important;
+
+  border-color: #a78bfa !important;
+
+  box-shadow:
+    0 12px 28px rgba(124, 58, 237, 0.36) !important;
+}
+
+
+/* =========================================
+   SIGNUP LOGIN SECTION
+========================================= */
+
+.signup-login-section {
+  width: 100%;
+
+  display: block;
+
+  margin-top: 25px;
+
+  padding-top: 22px;
+
+  border-top: 1px solid #334155;
+
+  text-align: center;
+
+  visibility: visible;
+
+  opacity: 1;
+}
+
+.signup-login-text {
+  display: block;
+
+  margin-bottom: 12px;
+
+  color: #94a3b8;
+
+  font-size: 15px;
+
+  line-height: 1.4;
+}
+
+.signup-login-button {
+  display: block;
+
+  width: 100%;
+
+  min-height: 52px;
+
+  padding: 13px 20px;
+
+  border: 1px solid #60a5fa;
+
+  border-radius: 11px;
+
+  background: #172554;
+
+  color: #60a5fa;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.signup-login-button:hover {
+  background: #2563eb;
+
+  border-color: #2563eb;
+
+  color: white;
+}
+
+
+/* =========================================
+   DASHBOARD
+========================================= */
+
+.dashboard {
+  min-height: 100vh;
+
+  background: #f1f5f9;
+
+  color: #0f172a;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.top-header {
+  width: 100%;
+
+  min-height: 80px;
+
+  padding: 15px 5%;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+
+  background: white;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  box-shadow:
+    0 3px 15px
+    rgba(0, 0, 0, 0.05);
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.brand-area h1 {
+  margin: 0;
+
+  font-size: 23px;
+}
+
+.brand-area p {
+  margin: 5px 0 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   HEADER ACTIONS
+========================================= */
+
+.header-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.theme-btn,
+.profile-btn {
+  padding: 11px 15px;
+
+  border-radius: 10px;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.theme-btn {
+  border: 1px solid #cbd5e1;
+
+  background: #f8fafc;
+
+  color: #334155;
+}
+
+.theme-btn:hover {
+  background: #e2e8f0;
+}
+
+.profile-btn {
+  border: none;
+
+  background: #eff6ff;
+
+  color: #1d4ed8;
+}
+
+.profile-btn:hover {
+  background: #dbeafe;
+}
+
+
+/* =========================================
+   MAIN EXPENSE AREA
+========================================= */
+
+.expense-area {
+  width: 100%;
+
+  max-width: 1200px;
+
+  margin: 30px auto;
+
+  padding: 0 20px;
+}
+
+
+/* =========================================
+   GENERAL CARDS
+========================================= */
+
+.welcome-card,
+.summary-card,
+.overview-card,
+.budget-card,
+.analytics-card,
+.transaction-card,
+.add-transaction-card,
+.categories-card,
+.expense-placeholder {
+  background: white;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 5px 20px
+    rgba(0, 0, 0, 0.05);
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.welcome-card {
+  padding: 25px;
+
+  margin-bottom: 20px;
+}
+
+.welcome-card h2 {
+  margin: 0 0 8px;
+}
+
+.welcome-card p {
+  margin: 0;
+
+  color: #64748b;
+}
+
+
+/* =========================================
+   SUMMARY
+========================================= */
+
+.summary-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 18px;
+
+  margin-bottom: 25px;
+}
+
+.summary-card {
+  padding: 22px;
+}
+
+.summary-card h3 {
+  margin: 0 0 10px;
+
+  font-size: 15px;
+
+  color: #64748b;
+}
+
+.summary-card .summary-value {
+  font-size: 27px;
+
+  font-weight: 700;
+}
+
+
+/* =========================================
+   MONTHLY OVERVIEW
+========================================= */
+
+.monthly-overview {
+  margin-bottom: 25px;
+}
+
+.monthly-overview h2,
+.budget-card h2,
+.analytics-section h2,
+.add-section h2,
+.history-section h2 {
+  margin: 0 0 18px;
+
+  font-size: 21px;
+}
+
+.overview-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 15px;
+}
+
+.overview-item {
+  padding: 18px;
+
+  background: white;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 12px;
+}
+
+.overview-item span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+.overview-item strong {
+  font-size: 19px;
+}
+
+
+/* =========================================
+   BUDGET
+========================================= */
+
+.budget-card {
+  padding: 25px;
+
+  margin-bottom: 25px;
+}
+
+.budget-top {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+}
+
+.budget-amount {
+  font-size: 25px;
+
+  font-weight: 700;
+}
+
+.budget-info {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 15px;
+
+  margin: 20px 0;
+}
+
+.budget-info-item {
+  padding: 15px;
+
+  border-radius: 11px;
+
+  background: #f8fafc;
+
+  border: 1px solid #e2e8f0;
+}
+
+.budget-info-item span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+.progress-container {
+  width: 100%;
+
+  height: 13px;
+
+  overflow: hidden;
+
+  border-radius: 20px;
+
+  background: #e2e8f0;
+}
+
+.progress-bar {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: #2563eb;
+
+  transition: width 0.3s ease;
+}
+
+.progress-success {
+  background: #16a34a;
+}
+
+.progress-warning {
+  background: #f59e0b;
+}
+
+.progress-danger {
+  background: #dc2626;
+}
+
+.budget-status {
+  margin-top: 10px;
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+.budget-form {
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+.budget-form input {
+  flex: 1;
+}
+
+.budget-form button {
+  min-width: 130px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #2563eb;
+
+  color: white;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* =========================================
+   ANALYTICS
+========================================= */
+
+.analytics-section {
+  margin-bottom: 25px;
+}
+
+.charts-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+
+  margin-bottom: 20px;
+}
+
+.chart-card {
+  width: 100%;
+
+  min-width: 0;
+
+  padding: 20px;
+
+  background: white;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 5px 20px
+    rgba(0, 0, 0, 0.05);
+}
+
+.chart-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.chart-card h3 {
+  margin: 0 0 15px;
+
+  font-size: 17px;
+}
+
+.chart-container {
+  width: 100%;
+
+  height: 350px;
+
+  min-height: 350px;
+
+  position: relative;
+}
+
+.chart-container.small {
+  height: 300px;
+
+  min-height: 300px;
+}
+
+
+/* =========================================
+   ADD TRANSACTION
+========================================= */
+
+.add-section {
+  margin-bottom: 25px;
+}
+
+.add-transaction-card {
+  padding: 25px;
+}
+
+.transaction-form {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 15px;
+}
+
+.transaction-form .full-width {
+  grid-column: 1 / -1;
+}
+
+.transaction-form button {
+  grid-column: 1 / -1;
+
+  min-height: 50px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #2563eb;
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.transaction-form button:hover {
+  background: #1d4ed8;
+}
+
+
+/* =========================================
+   TRANSACTION HISTORY
+========================================= */
+
+.history-section {
+  margin-bottom: 30px;
+}
+
+.transaction-card {
+  padding: 25px;
+
+  overflow: hidden;
+}
+
+.history-controls {
+  display: grid;
+
+  grid-template-columns:
+    2fr 1fr 1fr;
+
+  gap: 10px;
+
+  margin-bottom: 20px;
+}
+
+.transaction-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.transaction-row {
+  display: grid;
+
+  grid-template-columns:
+    2fr 1fr 1fr 1fr auto;
+
+  gap: 12px;
+
+  align-items: center;
+
+  padding: 15px;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 11px;
+
+  background: #f8fafc;
+}
+
+.transaction-description {
+  font-weight: 700;
+}
+
+.transaction-category,
+.transaction-date {
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+.income-text {
+  color: #16a34a;
+
+  font-weight: 700;
+}
+
+.expense-text {
+  color: #dc2626;
+
+  font-weight: 700;
+}
+
+.delete-btn {
+  padding: 8px 11px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #fee2e2;
+
+  color: #dc2626;
+
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #fecaca;
+}
+
+.download-container {
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+.download-select {
+  flex: 1;
+}
+
+.download-button {
+  padding: 12px 18px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #2563eb;
+
+  color: white;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* =========================================
+   CATEGORIES
+========================================= */
+
+.categories-section {
+  margin-bottom: 30px;
+}
+
+.categories-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 15px;
+}
+
+.category-card {
+  padding: 18px;
+
+  text-align: center;
+
+  background: white;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 12px;
+}
+
+.category-card h3 {
+  margin: 0 0 8px;
+
+  font-size: 15px;
+}
+
+.category-card p {
+  margin: 0;
+
+  font-size: 20px;
+
+  font-weight: 700;
+}
+
+
+/* =========================================
+   PROFILE
+========================================= */
+
+.profile-container {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: center;
+
+  padding: 35px 20px;
+}
+
+.profile-card {
+  width: 100%;
+
+  max-width: 750px;
+
+  padding: 35px;
+
+  text-align: center;
+
+  background: white;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 10px 35px
+    rgba(0, 0, 0, 0.08);
+}
+
+.profile-large-icon {
+  width: 90px;
+  height: 90px;
+
+  margin: 0 auto;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 50%;
+
+  background: #dbeafe;
+
+  font-size: 45px;
+}
+
+.profile-card h2 {
+  margin: 15px 0 5px;
+}
+
+.profile-title {
+  margin: 0 0 25px;
+
+  color: #64748b;
+}
+
+.profile-details {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 15px;
+
+  text-align: left;
+}
+
+.profile-details div {
+  padding: 16px;
+
+  border-radius: 11px;
+
+  background: #f8fafc;
+
+  border: 1px solid #e2e8f0;
+}
+
+.profile-details strong {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #475569;
+
+  font-size: 14px;
+}
+
+.profile-details span {
+  display: block;
+
+  color: #0f172a;
+
+  word-break: break-word;
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+.logout-btn {
+  width: 100%;
+
+  min-height: 50px;
+
+  margin-top: 25px;
+
+  padding: 13px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #dc2626;
+
+  color: white;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #b91c1c;
+}
+
+
+/* =========================================
+   BACK DASHBOARD
+========================================= */
+
+.back-dashboard-btn {
+  margin-top: 14px;
+
+  padding: 11px 18px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background: #eff6ff;
+
+  color: #1d4ed8;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* =========================================
+   PLACEHOLDER
+========================================= */
+
+.expense-placeholder {
+  padding: 25px;
+}
+
+.expense-placeholder h2 {
+  margin-top: 0;
+}
+
+.placeholder-box {
+  margin-top: 25px;
+
+  padding: 45px 20px;
+
+  text-align: center;
+
+  border: 2px dashed #cbd5e1;
+
+  border-radius: 15px;
+}
+
+.placeholder-icon {
+  font-size: 48px;
+}
+
+.placeholder-box h3 {
+  margin: 12px 0 8px;
+}
+
+.placeholder-box p {
+  margin: 0;
+
+  color: #64748b;
+}
+
+
+/* =========================================
+   DARK MODE
+========================================= */
+
+.dashboard.dark-mode {
+  background: #0f172a;
+
+  color: #f8fafc;
+}
+
+.dashboard.dark-mode .top-header {
+  background: #111827;
+
+  border-bottom-color: #263449;
+
+  box-shadow:
+    0 3px 15px
+    rgba(0, 0, 0, 0.3);
+}
+
+.dashboard.dark-mode .brand-area h1 {
+  color: #f8fafc;
+}
+
+.dashboard.dark-mode .brand-area p {
+  color: #94a3b8;
+}
+
+
+/* Dark cards */
+
+.dashboard.dark-mode .welcome-card,
+.dashboard.dark-mode .summary-card,
+.dashboard.dark-mode .overview-item,
+.dashboard.dark-mode .budget-card,
+.dashboard.dark-mode .chart-card,
+.dashboard.dark-mode .add-transaction-card,
+.dashboard.dark-mode .transaction-card,
+.dashboard.dark-mode .category-card,
+.dashboard.dark-mode .profile-card,
+.dashboard.dark-mode .expense-placeholder {
+  background: #111827;
+
+  border-color: #263449;
+
+  color: #f8fafc;
+
+  box-shadow:
+    0 5px 20px
+    rgba(0, 0, 0, 0.25);
+}
+
+.dashboard.dark-mode .welcome-card p,
+.dashboard.dark-mode .overview-item span,
+.dashboard.dark-mode .summary-card h3,
+.dashboard.dark-mode .profile-title,
+.dashboard.dark-mode .profile-details strong {
+  color: #94a3b8;
+}
+
+
+/* Dark inputs */
+
+.dashboard.dark-mode input,
+.dashboard.dark-mode select {
+  background: #0f172a;
+
+  border-color: #334155;
+
+  color: #f8fafc;
+}
+
+.dashboard.dark-mode input::placeholder {
+  color: #64748b;
+}
+
+
+/* Dark budget */
+
+.dashboard.dark-mode .budget-info-item {
+  background: #0f172a;
+
+  border-color: #334155;
+}
+
+.dashboard.dark-mode .budget-info-item span {
+  color: #94a3b8;
+}
+
+.dashboard.dark-mode .progress-container {
+  background: #334155;
+}
+
+
+/* Dark transaction rows */
+
+.dashboard.dark-mode .transaction-row {
+  background: #0f172a;
+
+  border-color: #334155;
+}
+
+.dashboard.dark-mode .transaction-category,
+.dashboard.dark-mode .transaction-date {
+  color: #94a3b8;
+}
+
+
+/* Dark profile */
+
+.dashboard.dark-mode .profile-details div {
+  background: #0f172a;
+
+  border-color: #334155;
+}
+
+.dashboard.dark-mode .profile-details span {
+  color: #f8fafc;
+}
+
+.dashboard.dark-mode .profile-large-icon {
+  background: #172554;
+}
+
+
+/* Dark buttons */
+
+.dashboard.dark-mode .theme-btn {
+  background: #1e293b;
+
+  border-color: #475569;
+
+  color: #f8fafc;
+}
+
+.dashboard.dark-mode .theme-btn:hover {
+  background: #334155;
+}
+
+.dashboard.dark-mode .profile-btn {
+  background: #172554;
+
+  color: #93c5fd;
+}
+
+.dashboard.dark-mode .profile-btn:hover {
+  background: #1e3a8a;
+}
+
+.dashboard.dark-mode .back-dashboard-btn {
+  background: #172554;
+
+  color: #93c5fd;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 900px) {
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-card.full-width {
+    grid-column: auto;
+  }
+
+  .categories-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .transaction-row {
+    grid-template-columns:
+      1fr 1fr;
+
+    gap: 10px;
+  }
+
+  .transaction-row .delete-btn {
+    width: 100%;
+  }
+}
+
+
+@media (max-width: 700px) {
+
+  .auth-page {
+    padding: 15px;
+  }
+
+  .auth-card {
+    margin-top: 20px;
+
+    padding: 25px 20px;
+  }
+
+  .signup-card {
+    padding: 25px 20px;
+  }
+
+  .auth-card h1,
+  .signup-card h1 {
+    font-size: 24px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: auto;
+  }
+
+  .top-header {
+    padding: 15px;
+
+    align-items: flex-start;
+  }
+
+  .brand-area h1 {
+    font-size: 17px;
+  }
+
+  .brand-area p {
+    font-size: 11px;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .theme-btn,
+  .profile-btn {
+    padding: 9px 10px;
+
+    white-space: nowrap;
+
+    font-size: 12px;
+  }
+
+  .expense-area {
+    margin-top: 20px;
+
+    padding: 0 12px;
+  }
+
+  .budget-info {
+    grid-template-columns: 1fr;
+  }
+
+  .budget-form {
+    flex-direction: column;
+  }
+
+  .budget-form button {
+    min-height: 48px;
+  }
+
+  .history-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .download-container {
+    flex-direction: column;
+  }
+
+  .chart-container {
+    height: 300px;
+
+    min-height: 300px;
+  }
+
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-container {
+    padding: 20px 15px;
+  }
+
+  .profile-card {
+    padding: 25px 18px;
+  }
+
+  .profile-details {
+    grid-template-columns: 1fr;
+  }
+
+  .signup-login-button {
+    min-height: 50px;
+
+    font-size: 15px;
+  }
+
+  .auth-options {
+    flex-direction: column !important;
+
+    gap: 13px !important;
+
+    margin-top: 22px !important;
+  }
+
+  .auth-option-btn {
+    width: 100% !important;
+
+    min-height: 60px !important;
+
+    font-size: 15px !important;
+
+    padding: 14px 18px !important;
+
+    border-radius: 13px !important;
+  }
+}
+
+
+/* =========================================
+   VERY SMALL PHONES
+========================================= */
+
+@media (max-width: 400px) {
+
+  .brand-area h1 {
+    font-size: 15px;
+  }
+
+  .brand-area p {
+    font-size: 10px;
+  }
+
+  .theme-btn,
+  .profile-btn {
+    padding: 8px 7px;
+
+    font-size: 11px;
+  }
+
+  .chart-container {
+    height: 260px;
+
+    min-height: 260px;
+  }
+
+  .auth-option-btn {
+    font-size: 12px !important;
+  }
+}
+/* =====================================================
+   FINAL FIX - MONTHLY OVERVIEW
+   These class names MUST match App.jsx
+===================================================== */
+
+.monthly-overview-card {
+  width: 100% !important;
+  padding: 32px !important;
+  margin-bottom: 25px !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 18px !important;
+
+  box-shadow:
+    0 8px 28px rgba(15, 23, 42, 0.06) !important;
+
+  color: #0f172a !important;
+}
+
+
+/* =====================================================
+   MONTHLY OVERVIEW HEADER
+===================================================== */
+
+.monthly-overview-header {
+  width: 100%;
+
+  margin-bottom: 24px;
+}
+
+.monthly-overview-header h2 {
+  margin: 0 0 8px;
+
+  color: #0f172a;
+
+  font-size: 30px;
+
+  font-weight: 800;
+
+  line-height: 1.2;
+}
+
+.monthly-overview-header p {
+  margin: 0;
+
+  color: #64748b;
+
+  font-size: 16px;
+}
+
+
+/* =====================================================
+   SELECT MONTH
+===================================================== */
+
+.month-selector {
+  width: 100%;
+
+  margin-bottom: 25px;
+}
+
+.month-selector label {
+  display: block;
+
+  margin-bottom: 9px;
+
+  color: #0f172a;
+
+  font-size: 16px;
+
+  font-weight: 700;
+}
+
+.month-selector input[type="month"] {
+  width: 100% !important;
+
+  min-height: 52px;
+
+  padding: 13px 16px;
+
+  background: #ffffff !important;
+
+  color: #0f172a !important;
+
+  border: 1px solid #cbd5e1 !important;
+
+  border-radius: 12px !important;
+
+  font-size: 16px;
+
+  outline: none;
+}
+
+.month-selector input[type="month"]:focus {
+  border-color: #2563eb !important;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37, 99, 235, 0.12);
+}
+
+
+/* =====================================================
+   MONTHLY GRID
+===================================================== */
+
+.monthly-overview-card .monthly-grid {
+  width: 100% !important;
+
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr)) !important;
+
+  gap: 18px !important;
+
+  margin: 0 !important;
+}
+
+
+/* =====================================================
+   ALL MONTHLY CARDS
+===================================================== */
+
+.monthly-overview-card .monthly-card {
+  width: 100% !important;
+
+  min-height: 145px !important;
+
+  display: flex !important;
+
+  align-items: center !important;
+
+  gap: 18px !important;
+
+  padding: 22px !important;
+
+  border: 1px solid !important;
+
+  border-radius: 15px !important;
+
+  box-shadow: none !important;
+
+  overflow: hidden;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.monthly-overview-card .monthly-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 20px
+    rgba(15, 23, 42, 0.08) !important;
+}
+
+
+/* =====================================================
+   CARD ICON
+===================================================== */
+
+.monthly-overview-card .monthly-card-icon {
+  flex: 0 0 65px !important;
+
+  width: 65px !important;
+
+  height: 65px !important;
+
+  display: flex !important;
+
+  align-items: center !important;
+
+  justify-content: center !important;
+
+  border-radius: 50% !important;
+
+  font-size: 27px;
+
+  font-weight: 800;
+
+  text-align: center;
+}
+
+
+/* =====================================================
+   CARD TEXT
+===================================================== */
+
+.monthly-overview-card .monthly-card span {
+  display: block !important;
+
+  margin-bottom: 8px !important;
+
+  color: #475569 !important;
+
+  font-size: 15px !important;
+
+  font-weight: 600 !important;
+
+  line-height: 1.3;
+}
+
+.monthly-overview-card .monthly-card strong {
+  display: block !important;
+
+  color: #0f172a;
+
+  font-size: 26px !important;
+
+  font-weight: 800 !important;
+
+  line-height: 1.15;
+
+  word-break: break-word;
+}
+
+
+/* =====================================================
+   1. MONTHLY INCOME - GREEN
+===================================================== */
+
+.monthly-overview-card .income-monthly {
+  background: #f0fdf4 !important;
+
+  border-color: #bbf7d0 !important;
+}
+
+.monthly-overview-card .income-monthly
+.monthly-card-icon {
+  background: #dcfce7 !important;
+
+  color: #16a34a !important;
+}
+
+.monthly-overview-card .income-monthly strong {
+  color: #15803d !important;
+}
+
+
+/* =====================================================
+   2. MONTHLY EXPENSES - RED
+===================================================== */
+
+.monthly-overview-card .expense-monthly {
+  background: #fff1f2 !important;
+
+  border-color: #fecdd3 !important;
+}
+
+.monthly-overview-card .expense-monthly
+.monthly-card-icon {
+  background: #ffe4e6 !important;
+
+  color: #dc2626 !important;
+}
+
+.monthly-overview-card .expense-monthly strong {
+  color: #dc2626 !important;
+}
+
+
+/* =====================================================
+   3. MONTHLY SAVINGS - BLUE
+===================================================== */
+
+.monthly-overview-card .savings-monthly {
+  background: #eff6ff !important;
+
+  border-color: #bfdbfe !important;
+}
+
+.monthly-overview-card .savings-monthly
+.monthly-card-icon {
+  background: #dbeafe !important;
+
+  color: #2563eb !important;
+}
+
+.monthly-overview-card .savings-monthly strong {
+  color: #1d4ed8 !important;
+}
+
+
+/* =====================================================
+   4. AVERAGE EXPENSE - PURPLE
+===================================================== */
+
+.monthly-overview-card .average-monthly {
+  background: #f5f3ff !important;
+
+  border-color: #ddd6fe !important;
+}
+
+.monthly-overview-card .average-monthly
+.monthly-card-icon {
+  background: #ede9fe !important;
+
+  color: #7c3aed !important;
+}
+
+.monthly-overview-card .average-monthly strong {
+  color: #6d28d9 !important;
+}
+
+
+/* =====================================================
+   5. SAVINGS RATE - ORANGE
+===================================================== */
+
+.monthly-overview-card .rate-monthly {
+  background: #fffbeb !important;
+
+  border-color: #fde68a !important;
+}
+
+.monthly-overview-card .rate-monthly
+.monthly-card-icon {
+  background: #fef3c7 !important;
+
+  color: #d97706 !important;
+}
+
+.monthly-overview-card .rate-monthly strong {
+  color: #b45309 !important;
+}
+
+
+/* =====================================================
+   6. HIGHEST CATEGORY - TEAL
+===================================================== */
+
+.monthly-overview-card .category-monthly {
+  background: #ecfeff !important;
+
+  border-color: #a5f3fc !important;
+}
+
+.monthly-overview-card .category-monthly
+.monthly-card-icon {
+  background: #cffafe !important;
+
+  color: #0f766e !important;
+}
+
+.monthly-overview-card .category-monthly strong {
+  color: #0f766e !important;
+
+  font-size: 21px !important;
+}
+
+
+/* =====================================================
+   DARK MODE - MONTHLY OVERVIEW
+===================================================== */
+
+.dashboard.dark-mode
+.monthly-overview-card {
+  background: #111827 !important;
+
+  border-color: #334155 !important;
+
+  color: #f8fafc !important;
+}
+
+.dashboard.dark-mode
+.monthly-overview-header h2 {
+  color: #f8fafc !important;
+}
+
+.dashboard.dark-mode
+.monthly-overview-header p {
+  color: #94a3b8 !important;
+}
+
+.dashboard.dark-mode
+.month-selector label {
+  color: #f8fafc !important;
+}
+
+.dashboard.dark-mode
+.month-selector input[type="month"] {
+  background: #0f172a !important;
+
+  color: #f8fafc !important;
+
+  border-color: #475569 !important;
+}
+
+
+/* Dark income */
+
+.dashboard.dark-mode
+.monthly-overview-card
+.income-monthly {
+  background: #10251a !important;
+
+  border-color: #166534 !important;
+}
+
+.dashboard.dark-mode
+.income-monthly
+.monthly-card-icon {
+  background: #14532d !important;
+
+  color: #4ade80 !important;
+}
+
+.dashboard.dark-mode
+.income-monthly strong {
+  color: #4ade80 !important;
+}
+
+
+/* Dark expenses */
+
+.dashboard.dark-mode
+.monthly-overview-card
+.expense-monthly {
+  background: #2a1519 !important;
+
+  border-color: #9f1239 !important;
+}
+
+.dashboard.dark-mode
+.expense-monthly
+.monthly-card-icon {
+  background: #4c0519 !important;
+
+  color: #fb7185 !important;
+}
+
+.dashboard.dark-mode
+.expense-monthly strong {
+  color: #fb7185 !important;
+}
+
+
+/* Dark savings */
+
+.dashboard.dark-mode
+.monthly-overview-card
+.savings-monthly {
+  background: #101f38 !important;
+
+  border-color: #1d4ed8 !important;
+}
+
+.dashboard.dark-mode
+.savings-monthly
+.monthly-card-icon {
+  background: #172554 !important;
+
+  color: #60a5fa !important;
+}
+
+.dashboard.dark-mode
+.savings-monthly strong {
+  color: #60a5fa !important;
+}
+
+
+/* Dark average */
+
+.dashboard.dark-mode
+.monthly-overview-card
+.average-monthly {
+  background: #211936 !important;
+
+  border-color: #6d28d9 !important;
+}
+
+.dashboard.dark-mode
+.average-monthly
+.monthly-card-icon {
+  background: #2e1065 !important;
+
+  color: #a78bfa !important;
+}
+
+.dashboard.dark-mode
+.average-monthly strong {
+  color: #a78bfa !important;
+}
+
+
+/* Dark rate */
+
+.dashboard.dark-mode
+.monthly-overview-card
+.rate-monthly {
+  background: #29200d !important;
+
+  border-color: #a16207 !important;
+}
+
+.dashboard.dark-mode
+.rate-monthly
+.monthly-card-icon {
+  background: #451a03 !important;
+
+  color: #fbbf24 !important;
+}
+
+.dashboard.dark-mode
+.rate-monthly strong {
+  color: #fbbf24 !important;
+}
+
+
+/* Dark category */
+
+.dashboard.dark-mode
+.monthly-overview-card
+.category-monthly {
+  background: #0b2526 !important;
+
+  border-color: #0f766e !important;
+}
+
+.dashboard.dark-mode
+.category-monthly
+.monthly-card-icon {
+  background: #134e4a !important;
+
+  color: #2dd4bf !important;
+}
+
+.dashboard.dark-mode
+.category-monthly strong {
+  color: #2dd4bf !important;
+}
+
+
+/* =====================================================
+   DESKTOP
+===================================================== */
+
+@media (min-width: 901px) {
+
+  .monthly-overview-card
+  .monthly-grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr)) !important;
+  }
+
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 900px) {
+
+  .monthly-overview-card
+  .monthly-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+  .monthly-overview-card {
+    padding: 20px !important;
+  }
+
+  .monthly-overview-header h2 {
+    font-size: 25px !important;
+  }
+
+  .monthly-overview-header p {
+    font-size: 14px !important;
+  }
+
+  .monthly-overview-card
+  .monthly-grid {
+    grid-template-columns:
+      1fr !important;
+
+    gap: 14px !important;
+  }
+
+  .monthly-overview-card
+  .monthly-card {
+    min-height: 120px !important;
+
+    padding: 18px !important;
+
+    gap: 15px !important;
+  }
+
+  .monthly-overview-card
+  .monthly-card-icon {
+    flex-basis: 58px !important;
+
+    width: 58px !important;
+
+    height: 58px !important;
+
+    font-size: 23px;
+  }
+
+  .monthly-overview-card
+  .monthly-card strong {
+    font-size: 23px !important;
+  }
+
+  .monthly-overview-card
+  .category-monthly strong {
+    font-size: 19px !important;
+  }
+
+}
+/* =====================================================
+   MONTHLY OVERVIEW - FINAL RESPONSIVE FIX
+===================================================== */
+
+.monthly-overview-card .monthly-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+  width: 100% !important;
+}
+
+
+/* CARD */
+
+.monthly-overview-card .monthly-card {
+  min-width: 0 !important;
+  width: 100% !important;
+
+  min-height: 145px !important;
+
+  display: grid !important;
+
+  grid-template-columns: 65px minmax(0, 1fr) !important;
+
+  align-items: center !important;
+
+  gap: 18px !important;
+
+  padding: 20px !important;
+
+  overflow: hidden !important;
+}
+
+
+/* ICON */
+
+.monthly-overview-card .monthly-card-icon {
+  width: 65px !important;
+  height: 65px !important;
+
+  min-width: 65px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 50% !important;
+
+  font-size: 27px !important;
+}
+
+
+/* TEXT AREA */
+
+.monthly-overview-card .monthly-card > div:last-child {
+  min-width: 0 !important;
+
+  width: 100% !important;
+}
+
+
+/* LABEL */
+
+.monthly-overview-card .monthly-card span {
+  display: block !important;
+
+  margin-bottom: 7px !important;
+
+  font-size: 15px !important;
+
+  line-height: 1.25 !important;
+
+  color: #475569 !important;
+
+  word-break: normal !important;
+
+  overflow-wrap: normal !important;
+}
+
+
+/* NUMBER */
+
+.monthly-overview-card .monthly-card strong {
+  display: block !important;
+
+  width: 100% !important;
+
+  font-size: 26px !important;
+
+  line-height: 1.15 !important;
+
+  font-weight: 800 !important;
+
+  white-space: nowrap !important;
+
+  word-break: normal !important;
+
+  overflow-wrap: normal !important;
+
+  letter-spacing: -0.4px !important;
+}
+
+
+/* HIGHEST CATEGORY */
+
+.monthly-overview-card .category-monthly strong {
+  white-space: normal !important;
+
+  overflow-wrap: break-word !important;
+
+  word-break: normal !important;
+
+  font-size: 20px !important;
+
+  line-height: 1.2 !important;
+}
+
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+.dashboard.dark-mode
+.monthly-overview-card .monthly-card span {
+  color: #94a3b8 !important;
+}
+
+.dashboard.dark-mode
+.monthly-overview-card .monthly-card strong {
+  white-space: nowrap !important;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 1000px) {
+
+  .monthly-overview-card .monthly-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+  .monthly-overview-card .monthly-grid {
+    grid-template-columns: 1fr !important;
+
+    gap: 14px !important;
+  }
+
+  .monthly-overview-card .monthly-card {
+    grid-template-columns: 58px minmax(0, 1fr) !important;
+
+    min-height: 115px !important;
+
+    padding: 17px !important;
+
+    gap: 14px !important;
+  }
+
+  .monthly-overview-card .monthly-card-icon {
+    width: 58px !important;
+
+    height: 58px !important;
+
+    min-width: 58px !important;
+
+    font-size: 23px !important;
+  }
+
+  .monthly-overview-card .monthly-card span {
+    font-size: 14px !important;
+  }
+
+  .monthly-overview-card .monthly-card strong {
+    font-size: 23px !important;
+
+    white-space: nowrap !important;
+  }
+
+  .monthly-overview-card
+  .category-monthly strong {
+    white-space: normal !important;
+
+    font-size: 19px !important;
+  }
+
+}
+
+
+/* =====================================================
+   VERY SMALL PHONES
+===================================================== */
+
+@media (max-width: 380px) {
+
+  .monthly-overview-card .monthly-card {
+    grid-template-columns: 50px minmax(0, 1fr) !important;
+
+    gap: 11px !important;
+
+    padding: 14px !important;
+  }
+
+  .monthly-overview-card .monthly-card-icon {
+    width: 50px !important;
+
+    height: 50px !important;
+
+    min-width: 50px !important;
+
+    font-size: 20px !important;
+  }
+
+  .monthly-overview-card .monthly-card strong {
+    font-size: 21px !important;
+  }
+
+}
+/* =========================================================
+   MONTHLY BUDGET - FINAL CARD DESIGN
+========================================================= */
+
+.budget-card {
+  width: 100% !important;
+
+  padding: 32px !important;
+
+  margin-bottom: 25px !important;
+
+  background: #ffffff !important;
+
+  border: 1px solid #e2e8f0 !important;
+
+  border-radius: 18px !important;
+
+  box-shadow:
+    0 8px 28px rgba(15, 23, 42, 0.06) !important;
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.budget-card h2 {
+  margin: 0 0 28px !important;
+
+  font-size: 30px !important;
+
+  font-weight: 800 !important;
+
+  color: #0f172a !important;
+}
+
+
+/* =========================================================
+   BUDGET THREE BOXES
+========================================================= */
+
+.budget-card .budget-grid {
+  width: 100% !important;
+
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr)) !important;
+
+  gap: 18px !important;
+
+  margin-bottom: 30px !important;
+}
+
+
+/* =========================================================
+   EACH BOX
+========================================================= */
+
+.budget-card .budget-grid > div {
+  min-width: 0 !important;
+
+  min-height: 145px !important;
+
+  display: flex !important;
+
+  flex-direction: column !important;
+
+  justify-content: center !important;
+
+  padding: 25px !important;
+
+  border-radius: 15px !important;
+
+  border: 1px solid !important;
+
+  position: relative !important;
+
+  overflow: hidden !important;
+}
+
+
+/* =========================================================
+   BUDGET BOX - BLUE
+========================================================= */
+
+.budget-card .budget-grid > div:nth-child(1) {
+  background: #eff6ff !important;
+
+  border-color: #bfdbfe !important;
+}
+
+.budget-card .budget-grid > div:nth-child(1)::before {
+  content: "💳";
+
+  width: 58px;
+
+  height: 58px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin-bottom: 12px;
+
+  border-radius: 50%;
+
+  background: #dbeafe;
+
+  font-size: 27px;
+}
+
+
+/* =========================================================
+   SPENT BOX - RED
+========================================================= */
+
+.budget-card .budget-grid > div:nth-child(2) {
+  background: #fff1f2 !important;
+
+  border-color: #fecdd3 !important;
+}
+
+.budget-card .budget-grid > div:nth-child(2)::before {
+  content: "💸";
+
+  width: 58px;
+
+  height: 58px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin-bottom: 12px;
+
+  border-radius: 50%;
+
+  background: #ffe4e6;
+
+  font-size: 27px;
+}
+
+
+/* =========================================================
+   REMAINING BOX - GREEN
+========================================================= */
+
+.budget-card .budget-grid > div:nth-child(3) {
+  background: #ecfdf5 !important;
+
+  border-color: #a7f3d0 !important;
+}
+
+.budget-card .budget-grid > div:nth-child(3)::before {
+  content: "💰";
+
+  width: 58px;
+
+  height: 58px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin-bottom: 12px;
+
+  border-radius: 50%;
+
+  background: #d1fae5;
+
+  font-size: 27px;
+}
+
+
+/* =========================================================
+   BOX LABEL
+========================================================= */
+
+.budget-card .budget-grid span {
+  display: block !important;
+
+  margin-bottom: 7px !important;
+
+  color: #64748b !important;
+
+  font-size: 16px !important;
+
+  font-weight: 600 !important;
+}
+
+
+/* =========================================================
+   BOX NUMBER
+========================================================= */
+
+.budget-card .budget-grid strong {
+  display: block !important;
+
+  font-size: 27px !important;
+
+  font-weight: 800 !important;
+
+  line-height: 1.2 !important;
+
+  white-space: nowrap !important;
+}
+
+
+/* Budget number */
+
+.budget-card
+.budget-grid
+> div:nth-child(1)
+strong {
+  color: #2563eb !important;
+}
+
+
+/* Spent number */
+
+.budget-card
+.budget-grid
+> div:nth-child(2)
+strong {
+  color: #dc2626 !important;
+}
+
+
+/* Remaining number */
+
+.budget-card
+.budget-grid
+> div:nth-child(3)
+strong {
+  color: #16a34a !important;
+}
+
+
+/* =========================================================
+   PROGRESS SECTION
+========================================================= */
+
+.budget-progress {
+  width: 100% !important;
+
+  height: 14px !important;
+
+  margin-top: 5px !important;
+
+  overflow: hidden !important;
+
+  border-radius: 20px !important;
+
+  background: #e2e8f0 !important;
+}
+
+.budget-progress-bar {
+  height: 100% !important;
+
+  border-radius: 20px !important;
+
+  transition:
+    width 0.4s ease !important;
+}
+
+.success-progress {
+  background: #22c55e !important;
+}
+
+.warning-progress {
+  background: #f59e0b !important;
+}
+
+.danger-progress {
+  background: #ef4444 !important;
+}
+
+
+/* =========================================================
+   PERCENTAGE
+========================================================= */
+
+.budget-percentage {
+  display: flex;
+
+  justify-content: space-between;
+
+  margin: 12px 0 18px !important;
+
+  color: #475569 !important;
+
+  font-size: 16px !important;
+
+  font-weight: 700 !important;
+}
+
+
+/* =========================================================
+   BUDGET MESSAGE
+========================================================= */
+
+.budget-message {
+  width: 100% !important;
+
+  margin: 0 0 25px !important;
+
+  padding: 17px 20px !important;
+
+  border-radius: 13px !important;
+
+  font-size: 16px !important;
+
+  font-weight: 700 !important;
+}
+
+.budget-message.success {
+  background: #ecfdf5 !important;
+
+  border: 1px solid #10b981 !important;
+
+  color: #059669 !important;
+}
+
+.budget-message.warning {
+  background: #fffbeb !important;
+
+  border: 1px solid #f59e0b !important;
+
+  color: #b45309 !important;
+}
+
+.budget-message.danger {
+  background: #fef2f2 !important;
+
+  border: 1px solid #ef4444 !important;
+
+  color: #dc2626 !important;
+}
+
+
+/* =========================================================
+   BUDGET FORM
+========================================================= */
+
+.budget-card .budget-form {
+  width: 100% !important;
+
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr) 240px !important;
+
+  gap: 18px !important;
+
+  margin-top: 0 !important;
+}
+
+
+/* INPUT */
+
+.budget-card .budget-form input {
+  width: 100% !important;
+
+  min-height: 58px !important;
+
+  padding: 15px 20px !important;
+
+  background: #ffffff !important;
+
+  color: #0f172a !important;
+
+  border: 1px solid #cbd5e1 !important;
+
+  border-radius: 13px !important;
+
+  font-size: 16px !important;
+
+  outline: none !important;
+}
+
+.budget-card .budget-form input:focus {
+  border-color: #2563eb !important;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37, 99, 235, 0.12) !important;
+}
+
+
+/* BUTTON */
+
+.budget-card .budget-form button {
+  width: 100% !important;
+
+  min-height: 58px !important;
+
+  border: none !important;
+
+  border-radius: 13px !important;
+
+  background: #2563eb !important;
+
+  color: #ffffff !important;
+
+  font-size: 16px !important;
+
+  font-weight: 800 !important;
+
+  cursor: pointer !important;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease !important;
+}
+
+.budget-card .budget-form button:hover {
+  background: #1d4ed8 !important;
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+.dashboard.dark-mode .budget-card {
+  background: #111827 !important;
+
+  border-color: #334155 !important;
+
+  box-shadow:
+    0 8px 28px
+    rgba(0, 0, 0, 0.25) !important;
+}
+
+.dashboard.dark-mode .budget-card h2 {
+  color: #f8fafc !important;
+}
+
+
+/* Dark Budget */
+
+.dashboard.dark-mode
+.budget-card
+.budget-grid
+> div:nth-child(1) {
+  background: #101f38 !important;
+
+  border-color: #1d4ed8 !important;
+}
+
+.dashboard.dark-mode
+.budget-card
+.budget-grid
+> div:nth-child(1)::before {
+  background: #172554 !important;
+}
+
+
+/* Dark Spent */
+
+.dashboard.dark-mode
+.budget-card
+.budget-grid
+> div:nth-child(2) {
+  background: #2a1519 !important;
+
+  border-color: #9f1239 !important;
+}
+
+.dashboard.dark-mode
+.budget-card
+.budget-grid
+> div:nth-child(2)::before {
+  background: #4c0519 !important;
+}
+
+
+/* Dark Remaining */
+
+.dashboard.dark-mode
+.budget-card
+.budget-grid
+> div:nth-child(3) {
+  background: #10251f !important;
+
+  border-color: #047857 !important;
+}
+
+.dashboard.dark-mode
+.budget-card
+.budget-grid
+> div:nth-child(3)::before {
+  background: #064e3b !important;
+}
+
+
+/* Dark labels */
+
+.dashboard.dark-mode
+.budget-card
+.budget-grid
+span {
+  color: #94a3b8 !important;
+}
+
+
+/* Dark numbers */
+
+.dashboard.dark-mode
+.budget-card
+.budget-grid
+> div:nth-child(1)
+strong {
+  color: #60a5fa !important;
+}
+
+.dashboard.dark-mode
+.budget-card
+.budget-grid
+> div:nth-child(2)
+strong {
+  color: #fb7185 !important;
+}
+
+.dashboard.dark-mode
+.budget-card
+.budget-grid
+> div:nth-child(3)
+strong {
+  color: #4ade80 !important;
+}
+
+
+/* Dark progress */
+
+.dashboard.dark-mode
+.budget-progress {
+  background: #334155 !important;
+}
+
+
+/* Dark percentage */
+
+.dashboard.dark-mode
+.budget-percentage {
+  color: #cbd5e1 !important;
+}
+
+
+/* Dark success message */
+
+.dashboard.dark-mode
+.budget-message.success {
+  background: #0d2920 !important;
+
+  border-color: #047857 !important;
+
+  color: #4ade80 !important;
+}
+
+
+/* Dark warning */
+
+.dashboard.dark-mode
+.budget-message.warning {
+  background: #2a210d !important;
+
+  border-color: #a16207 !important;
+
+  color: #fbbf24 !important;
+}
+
+
+/* Dark danger */
+
+.dashboard.dark-mode
+.budget-message.danger {
+  background: #2a1215 !important;
+
+  border-color: #b91c1c !important;
+
+  color: #fb7185 !important;
+}
+
+
+/* Dark input */
+
+.dashboard.dark-mode
+.budget-card
+.budget-form
+input {
+  background: #0f172a !important;
+
+  color: #f8fafc !important;
+
+  border-color: #475569 !important;
+}
+
+.dashboard.dark-mode
+.budget-card
+.budget-form
+input::placeholder {
+  color: #64748b !important;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .budget-card .budget-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .budget-card
+  .budget-grid
+  > div:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  .budget-card .budget-form {
+    grid-template-columns:
+      1fr 180px !important;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .budget-card {
+    padding: 20px !important;
+  }
+
+  .budget-card h2 {
+    font-size: 25px !important;
+
+    margin-bottom: 22px !important;
+  }
+
+  .budget-card .budget-grid {
+    grid-template-columns: 1fr !important;
+
+    gap: 13px !important;
+  }
+
+  .budget-card
+  .budget-grid
+  > div:nth-child(3) {
+    grid-column: auto !important;
+  }
+
+  .budget-card .budget-grid > div {
+    min-height: 120px !important;
+
+    padding: 20px !important;
+  }
+
+  .budget-card .budget-grid strong {
+    font-size: 24px !important;
+  }
+
+  .budget-card .budget-form {
+    grid-template-columns: 1fr !important;
+
+    gap: 12px !important;
+  }
+
+  .budget-card .budget-form input,
+  .budget-card .budget-form button {
+    min-height: 54px !important;
+  }
+
+}
+/* =========================================================
+   FIX MONTHLY OVERVIEW TEXT VISIBILITY
+========================================================= */
+
+.monthly-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.monthly-content span {
+  color: #94a3b8 !important;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.monthly-content strong {
+  color: #ffffff !important;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+/* Individual monthly card value colours */
+
+.monthly-income .monthly-content strong {
+  color: #4ade80 !important;
+}
+
+.monthly-expenses .monthly-content strong {
+  color: #fb7185 !important;
+}
+
+.monthly-savings .monthly-content strong {
+  color: #60a5fa !important;
+}
+
+.monthly-average .monthly-content strong {
+  color: #a78bfa !important;
+}
+
+.monthly-rate .monthly-content strong {
+  color: #fbbf24 !important;
+}
+
+.monthly-category .monthly-content strong {
+  color: #2dd4bf !important;
+}
+
+/* Make the cards comfortable and readable */
+
+.monthly-card {
+  min-height: 150px;
+  padding: 28px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+/* Icons */
+
+.monthly-icon {
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 30px;
+
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Dark mode */
+
+.dashboard.dark-mode
+.monthly-content strong {
+  color: #ffffff !important;
+}
+
+.dashboard.dark-mode
+.monthly-content span {
+  color: #94a3b8 !important;
+}
+
+/* Light mode */
+
+.dashboard:not(.dark-mode)
+.monthly-content strong {
+  color: #172033 !important;
+}
+
+.dashboard:not(.dark-mode)
+.monthly-content span {
+  color: #526174 !important;
+}
+
+/* Keep coloured values in light mode too */
+
+.dashboard:not(.dark-mode)
+.monthly-income .monthly-content strong {
+  color: #16a34a !important;
+}
+
+.dashboard:not(.dark-mode)
+.monthly-expenses .monthly-content strong {
+  color: #dc2626 !important;
+}
+
+.dashboard:not(.dark-mode)
+.monthly-savings .monthly-content strong {
+  color: #2563eb !important;
+}
+
+.dashboard:not(.dark-mode)
+.monthly-average .monthly-content strong {
+  color: #7c3aed !important;
+}
+
+.dashboard:not(.dark-mode)
+.monthly-rate .monthly-content strong {
+  color: #d97706 !important;
+}
+
+.dashboard:not(.dark-mode)
+.monthly-category .monthly-content strong {
+  color: #0f766e !important;
+}
+
+/* =========================================================
+   PASSWORD EYE TOGGLE
+   ========================================================= */
+
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 58px !important;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  margin: 0;
+
+  border: none;
+  border-radius: 9px;
+
+  background: transparent;
+  color: #94a3b8;
+
+  font-size: 21px;
+  line-height: 1;
+
+  cursor: pointer;
+  z-index: 2;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.password-toggle:hover {
+  background: #1e293b;
+  transform: translateY(-50%) scale(1.04);
+}
+
+.password-toggle:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
+}
+
+
+/* =========================================================
+   ADD TRANSACTION - BOX STYLE
+   ========================================================= */
+
+.transaction-actions {
+  width: 100%;
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  margin-top: 22px;
+}
+
+.transaction-actions .primary-button {
+  flex: 1;
+  min-height: 58px;
+
+  padding: 15px 24px;
+
+  border: 2px solid #2563eb;
+  border-radius: 14px;
+
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #1d4ed8
+  );
+
+  color: #ffffff;
+
+  font-size: 17px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 20px rgba(37, 99, 235, 0.25);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.transaction-actions .primary-button:hover {
+  background: linear-gradient(
+    135deg,
+    #3b82f6,
+    #2563eb
+  );
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 26px rgba(37, 99, 235, 0.35);
+}
+
+.transaction-actions .primary-button:active {
+  transform: translateY(0);
+}
+
+.transaction-actions .cancel-button {
+  min-height: 58px;
+
+  padding: 15px 24px;
+
+  border: 2px solid #cbd5e1;
+  border-radius: 14px;
+
+  background: #f8fafc;
+  color: #334155;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.transaction-actions .cancel-button:hover {
+  background: #e2e8f0;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .transaction-actions {
+    flex-direction: column;
+  }
+
+  .transaction-actions .primary-button,
+  .transaction-actions .cancel-button {
+    width: 100%;
+    min-height: 56px;
+  }
+
+  .password-toggle {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+
+/* =========================================================
+   DARK MODE - BUTTONS
+   ========================================================= */
+
+.dashboard.dark-mode
+.transaction-actions .cancel-button {
+  background: #1e293b;
+  border-color: #475569;
+  color: #f8fafc;
+}
+
+.dashboard.dark-mode
+.transaction-actions .cancel-button:hover {
+  background: #334155;
+}
+
+/* =========================================================
+   ANALYTICS LAYOUT FIX
+   Keep every analytics chart stacked vertically and make
+   the analytics section match dark mode correctly.
+   ========================================================= */
+
+.charts-grid {
+  grid-template-columns: 1fr !important;
+}
+
+.charts-grid .chart-card {
+  grid-column: 1 / -1 !important;
+  width: 100%;
+}
+
+.dashboard.dark-mode .analytics-card {
+  background: #111827 !important;
+  border-color: #263449 !important;
+  color: #f8fafc !important;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25) !important;
+}
+
+.dashboard.dark-mode .analytics-card .section-heading h2,
+.dashboard.dark-mode .analytics-card h3 {
+  color: #f8fafc !important;
+}
+
+.dashboard.dark-mode .analytics-card .section-heading p {
+  color: #94a3b8 !important;
+}
+
+/* Keep charts stacked on every screen size. */
+@media (max-width: 900px) {
+  .charts-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .charts-grid .chart-card,
+  .charts-grid .chart-card.full-width,
+  .charts-grid .chart-full-width {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* =========================================================
+   IMPROVED TRANSACTION HISTORY
+   Clear sorting, filtering and duplicate highlighting.
+========================================================= */
+
+.history-controls,
+.filters {
+  display: grid;
+  grid-template-columns: minmax(220px, 2fr) repeat(4, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.history-controls input,
+.history-controls select,
+.filters input,
+.filters select {
+  width: 100%;
+}
+
+.history-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 4px 0 16px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.history-summary strong {
+  color: #0f172a;
+}
+
+.duplicate-summary {
+  color: #b45309;
+  font-weight: 700;
+}
+
+.transaction-item.possible-duplicate {
+  border: 2px solid #f59e0b !important;
+  background: #fffbeb !important;
+}
+
+.duplicate-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 8px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.dashboard.dark-mode .history-summary {
+  background: #1e293b;
+  color: #94a3b8;
+}
+
+.dashboard.dark-mode .history-summary strong {
+  color: #f8fafc;
+}
+
+.dashboard.dark-mode .duplicate-summary {
+  color: #fbbf24;
+}
+
+.dashboard.dark-mode .transaction-item.possible-duplicate {
+  background: #29200d !important;
+  border-color: #f59e0b !important;
+}
+
+.dashboard.dark-mode .duplicate-badge {
+  background: #451a03;
+  color: #fbbf24;
+}
+
+@media (max-width: 1100px) {
+  .history-controls,
+  .filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .history-controls input,
+  .filters input {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .history-controls,
+  .filters {
+    grid-template-columns: 1fr;
+  }
+
+  .history-controls input,
+  .filters input {
+    grid-column: auto;
+  }
+
+  .history-summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+
+/* =========================================================
+   FINAL MOBILE RESPONSIVE POLISH
+   Keeps the existing theme/design and improves phone layout.
+   ========================================================= */
+
+/* Prevent horizontal scrolling on all devices */
+html,
+body,
+#root {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+canvas {
+  max-width: 100%;
+}
+
+/* Tablets and smaller laptops */
+@media (max-width: 900px) {
+  .top-header {
+    padding: 14px 20px;
+  }
+
+  .expense-area {
+    padding: 0 16px;
+  }
+
+  .summary-grid,
+  .overview-grid,
+  .categories-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .transaction-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .profile-details {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .chart-container {
+    height: 320px;
+    min-height: 320px;
+  }
+}
+
+/* Phones */
+@media (max-width: 600px) {
+  /* Page spacing */
+  .expense-area {
+    width: 100%;
+    margin: 18px auto;
+    padding: 0 12px;
+  }
+
+  /* Authentication */
+  .auth-page {
+    padding: 16px 10px;
+  }
+
+  .auth-card,
+  .signup-card {
+    width: 100%;
+    max-width: 100%;
+    padding: 22px 16px;
+    border-radius: 16px;
+    margin-top: 10px;
+    margin-bottom: 16px;
+  }
+
+  .auth-card h1,
+  .signup-card h1 {
+    font-size: 23px;
+  }
+
+  .auth-subtitle {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0;
+  }
+
+  .form-grid .full-width {
+    grid-column: auto;
+  }
+
+  input,
+  select {
+    min-height: 50px;
+    font-size: 16px;
+  }
+
+  form label {
+    font-size: 14px;
+  }
+
+  .auth-options {
+    gap: 10px !important;
+  }
+
+  .auth-option-btn {
+    padding: 13px 7px !important;
+    font-size: 14px !important;
+  }
+
+  /* Dashboard header */
+  .top-header {
+    min-height: auto;
+    padding: 14px 12px;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .brand-area {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .brand-area h1 {
+    font-size: 18px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .brand-area p {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .header-actions {
+    flex-shrink: 0;
+    gap: 6px;
+  }
+
+  .theme-btn,
+  .profile-btn {
+    min-width: 42px;
+    min-height: 42px;
+    padding: 9px 10px;
+    font-size: 13px;
+  }
+
+  /* Cards */
+  .welcome-card,
+  .budget-card,
+  .add-transaction-card,
+  .transaction-card,
+  .expense-placeholder {
+    padding: 18px 14px;
+    border-radius: 14px;
+  }
+
+  .welcome-card h2 {
+    font-size: 20px;
+  }
+
+  .monthly-overview h2,
+  .budget-card h2,
+  .analytics-section h2,
+  .add-section h2,
+  .history-section h2 {
+    font-size: 19px;
+  }
+
+  /* Summary */
+  .summary-grid,
+  .overview-grid,
+  .categories-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  .summary-card {
+    padding: 18px;
+  }
+
+  .summary-card .summary-value {
+    font-size: 24px;
+  }
+
+  .overview-item {
+    padding: 16px;
+  }
+
+  /* Monthly cards */
+  .monthly-card {
+    min-height: 125px;
+    padding: 18px;
+    gap: 15px;
+  }
+
+  .monthly-icon {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    font-size: 24px;
+  }
+
+  .monthly-content span {
+    font-size: 14px;
+  }
+
+  .monthly-content strong {
+    font-size: 23px;
+    overflow-wrap: anywhere;
+  }
+
+  /* Budget */
+  .budget-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .budget-amount {
+    font-size: 23px;
+  }
+
+  .budget-card .budget-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .budget-card .budget-form {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Analytics */
+  .charts-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  .charts-grid .chart-card,
+  .charts-grid .chart-card.full-width,
+  .charts-grid .chart-full-width {
+    grid-column: 1 / -1 !important;
+  }
+
+  .chart-card {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .chart-card h3 {
+    font-size: 15px;
+  }
+
+  .chart-container,
+  .chart-container.small {
+    height: 280px;
+    min-height: 280px;
+  }
+
+  /* Add transaction */
+  .transaction-form {
+    grid-template-columns: 1fr !important;
+    gap: 2px;
+  }
+
+  .transaction-form .full-width {
+    grid-column: auto;
+  }
+
+  .transaction-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .transaction-actions .primary-button,
+  .transaction-actions .cancel-button {
+    width: 100%;
+    min-height: 54px;
+  }
+
+  /* History filters */
+  .history-controls,
+  .filters {
+    grid-template-columns: 1fr !important;
+    gap: 9px;
+  }
+
+  .history-controls input,
+  .filters input {
+    grid-column: auto !important;
+  }
+
+  .history-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 13px;
+  }
+
+  .download-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .download-select,
+  .download-button {
+    width: 100%;
+    min-height: 50px;
+  }
+
+  /* Transaction history cards */
+  .transaction-list {
+    gap: 10px;
+  }
+
+  .transaction-item {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .transaction-main {
+    min-width: 0;
+  }
+
+  .transaction-main h3 {
+    font-size: 15px;
+    overflow-wrap: anywhere;
+  }
+
+  .transaction-right {
+    min-width: 0;
+  }
+
+  .transaction-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .transaction-buttons button {
+    width: 100%;
+    min-height: 44px;
+    padding: 9px 8px;
+    font-size: 13px;
+  }
+
+  .transaction-buttons .download-bill-btn {
+    grid-column: 1 / -1;
+  }
+
+  /* Category cards */
+  .category-card {
+    padding: 16px;
+  }
+
+  /* Profile */
+  .profile-container {
+    padding: 18px 12px;
+  }
+
+  .profile-card {
+    padding: 22px 16px;
+    border-radius: 16px;
+  }
+
+  .profile-large-icon {
+    width: 76px;
+    height: 76px;
+    font-size: 38px;
+  }
+
+  .profile-details {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+
+  /* Touch-friendly controls */
+  button,
+  select,
+  input {
+    touch-action: manipulation;
+  }
+
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+  .expense-area {
+    padding: 0 9px;
+  }
+
+  .top-header {
+    padding: 12px 9px;
+  }
+
+  .brand-area h1 {
+    font-size: 16px;
+  }
+
+  .brand-area p {
+    font-size: 11px;
+  }
+
+  .theme-btn,
+  .profile-btn {
+    padding: 8px;
+    min-width: 38px;
+  }
+
+  .welcome-card,
+  .budget-card,
+  .add-transaction-card,
+  .transaction-card {
+    padding: 15px 12px;
+  }
+
+  .monthly-card {
+    padding: 15px;
+    gap: 12px;
+  }
+
+  .monthly-icon {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    font-size: 21px;
+  }
+
+  .monthly-content strong {
+    font-size: 20px;
+  }
+
+  .transaction-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .transaction-buttons .download-bill-btn {
+    grid-column: auto;
+  }
+
+  .chart-container,
+  .chart-container.small {
+    height: 250px;
+    min-height: 250px;
+  }
+}
+
+/* =========================================================
+   AUTH BUTTONS - FORCE LARGE BOX DESIGN
+   Put this at the VERY END of App.css
+========================================================= */
+
+.auth-card form .auth-options,
+.auth-card form > .auth-options {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  gap: 16px !important;
+  margin-top: 28px !important;
+  align-items: stretch !important;
+}
+
+.auth-card form .auth-options .auth-option-btn,
+.auth-card form > .auth-options > button,
+.auth-card form .auth-option-btn {
+  display: flex !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 64px !important;
+  margin: 0 !important;
+  padding: 16px 20px !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 14px !important;
+  box-sizing: border-box !important;
+
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+
+  cursor: pointer !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease !important;
+}
+
+/* Blue Sign In box */
+.auth-card form .signin-option,
+.auth-card form > .auth-options > button[type="submit"],
+.auth-card form .auth-options button:first-child {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border: 2px solid #60a5fa !important;
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.28) !important;
+}
+
+.auth-card form .signin-option:hover,
+.auth-card form > .auth-options > button[type="submit"]:hover,
+.auth-card form .auth-options button:first-child:hover {
+  background: #3b82f6 !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.40) !important;
+}
+
+/* Purple Create Account box */
+.auth-card form .signup-option,
+.auth-card form > .auth-options > button[type="button"],
+.auth-card form .auth-options button:nth-child(2) {
+  background: #4c1d95 !important;
+  color: #ffffff !important;
+  border: 2px solid #8b5cf6 !important;
+  box-shadow: 0 8px 22px rgba(124, 58, 237, 0.25) !important;
+}
+
+.auth-card form .signup-option:hover,
+.auth-card form > .auth-options > button[type="button"]:hover,
+.auth-card form .auth-options button:nth-child(2):hover {
+  background: #6d28d9 !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 28px rgba(124, 58, 237, 0.40) !important;
+}
+
+/* Keep it responsive on very small screens */
+@media (max-width: 600px) {
+  .auth-card form .auth-options,
+  .auth-card form > .auth-options {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 14px !important;
+  }
+
+  .auth-card form .auth-options .auth-option-btn,
+  .auth-card form > .auth-options > button {
+    width: 100% !important;
+    min-height: 60px !important;
+    padding: 14px 16px !important;
+    font-size: 16px !important;
+  }
+}
+/* =========================================================
+   FINAL LOGIN BUTTON BOX FIX
+   Matches the CURRENT App.jsx class names
+========================================================= */
+
+.auth-card .auth-actions {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  margin-top: 28px !important;
+}
+
+.auth-card .auth-actions button.primary-auth-button,
+.auth-card .auth-actions button.secondary-auth-button {
+  display: flex !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  min-height: 64px !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 16px 20px !important;
+  margin: 0 !important;
+
+  box-sizing: border-box !important;
+  border-radius: 14px !important;
+
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+
+  cursor: pointer !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+
+  transition: all 0.2s ease !important;
+}
+
+/* SIGN IN */
+.auth-card .auth-actions .primary-auth-button {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border: 2px solid #60a5fa !important;
+
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.30) !important;
+}
+
+.auth-card .auth-actions .primary-auth-button:hover {
+  background: #3b82f6 !important;
+  transform: translateY(-2px) !important;
+}
+
+/* CREATE ACCOUNT */
+.auth-card .auth-actions .secondary-auth-button {
+  background: #4c1d95 !important;
+  color: #ffffff !important;
+  border: 2px solid #8b5cf6 !important;
+
+  box-shadow: 0 8px 22px rgba(124, 58, 237, 0.25) !important;
+}
+
+.auth-card .auth-actions .secondary-auth-button:hover {
+  background: #6d28d9 !important;
+  transform: translateY(-2px) !important;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .auth-card .auth-actions {
+    width: 100% !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+  }
+
+  .auth-card .auth-actions button.primary-auth-button,
+  .auth-card .auth-actions button.secondary-auth-button {
+    width: 100% !important;
+    min-width: 100% !important;
+    min-height: 60px !important;
+    font-size: 16px !important;
+  }
+}

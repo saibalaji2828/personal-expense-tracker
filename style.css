@@ -1,0 +1,2211 @@
+/* =========================================================
+   PERSONAL EXPENSE TRACKER
+   COMPLETE STYLE SHEET
+   ========================================================= */
+
+
+/* =========================================================
+   ROOT VARIABLES
+   ========================================================= */
+
+:root {
+
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+
+    --background: #f5f7fb;
+    --surface: #ffffff;
+
+    --text: #111827;
+    --muted: #6b7280;
+
+    --border: #d1d5db;
+
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #f59e0b;
+
+    --shadow:
+        0 10px 30px rgba(0, 0, 0, 0.08);
+
+    --radius: 16px;
+
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        var(--background);
+
+    color:
+        var(--text);
+
+    min-height: 100vh;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease;
+
+}
+
+
+/* =========================================================
+   PROFILE PAGE
+   ========================================================= */
+
+.profile-page {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 30px 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #f8fafc
+        );
+
+}
+
+
+.profile-card {
+
+    width: 100%;
+
+    max-width: 520px;
+
+    background:
+        var(--surface);
+
+    padding: 40px;
+
+    border-radius:
+        24px;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0, 0, 0, 0.12);
+
+}
+
+
+.profile-icon {
+
+    width: 90px;
+
+    height: 90px;
+
+    margin:
+        0 auto 20px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        #e0e7ff;
+
+    font-size: 48px;
+
+}
+
+
+.profile-card h1 {
+
+    text-align: center;
+
+    font-size: 30px;
+
+    margin-bottom: 8px;
+
+}
+
+
+.profile-subtitle {
+
+    text-align: center;
+
+    color:
+        var(--muted);
+
+    margin-bottom: 28px;
+
+    font-size: 16px;
+
+}
+
+
+/* =========================================================
+   PROFILE FORM
+   ========================================================= */
+
+.profile-field {
+
+    margin-bottom: 18px;
+
+}
+
+
+.profile-field label {
+
+    display: block;
+
+    font-weight: 600;
+
+    margin-bottom: 7px;
+
+}
+
+
+.profile-field input,
+.profile-field select {
+
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        10px;
+
+    font-size: 15px;
+
+    background:
+        var(--surface);
+
+    color:
+        var(--text);
+
+    outline: none;
+
+    transition:
+        border 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.profile-field input:focus,
+.profile-field select:focus {
+
+    border-color:
+        var(--primary);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, 0.12);
+
+}
+
+
+/* =========================================================
+   PROFILE CONTINUE BUTTON
+   ========================================================= */
+
+.profile-continue-btn {
+
+    width: 100%;
+
+    border: none;
+
+    border-radius:
+        10px;
+
+    padding: 14px;
+
+    margin-top: 8px;
+
+    background:
+        var(--primary);
+
+    color:
+        white;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+
+}
+
+
+.profile-continue-btn:hover {
+
+    background:
+        var(--primary-dark);
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+/* =========================================================
+   MAIN APPLICATION
+   ========================================================= */
+
+#appContent {
+
+    min-height: 100vh;
+
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.header {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding:
+        26px 40px;
+
+    background:
+        #1e293b;
+
+    color:
+        white;
+
+    border-bottom:
+        1px solid #334155;
+
+}
+
+
+.header h1 {
+
+    font-size: 34px;
+
+    margin-bottom: 5px;
+
+}
+
+
+.header p {
+
+    color:
+        #a5b4fc;
+
+    font-size: 18px;
+
+}
+
+
+/* =========================================================
+   HEADER ACTIONS
+   ========================================================= */
+
+.header-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+/* =========================================================
+   PROFILE BUTTON
+   ========================================================= */
+
+.profile-button {
+
+    width: 56px;
+
+    height: 56px;
+
+    border-radius: 50%;
+
+    border:
+        1px solid #475569;
+
+    background:
+        #334155;
+
+    color:
+        white;
+
+    font-size: 28px;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+
+}
+
+
+.profile-button:hover {
+
+    background:
+        #475569;
+
+    transform:
+        scale(1.05);
+
+}
+
+
+/* =========================================================
+   THEME BUTTON
+   ========================================================= */
+
+.theme-toggle {
+
+    border:
+        1px solid #475569;
+
+    background:
+        #334155;
+
+    color:
+        white;
+
+    padding:
+        12px 20px;
+
+    border-radius:
+        9px;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+
+.theme-toggle:hover {
+
+    background:
+        #475569;
+
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+   ========================================================= */
+
+.container {
+
+    width: 100%;
+
+    max-width: 1200px;
+
+    margin:
+        0 auto;
+
+    padding:
+        30px 20px 60px;
+
+}
+
+
+/* =========================================================
+   SUMMARY GRID
+   ========================================================= */
+
+.summary-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.summary-card {
+
+    background:
+        var(--surface);
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        var(--radius);
+
+    padding:
+        24px;
+
+    box-shadow:
+        var(--shadow);
+
+}
+
+
+.summary-card h3 {
+
+    color:
+        var(--muted);
+
+    font-size: 15px;
+
+    margin-bottom: 10px;
+
+}
+
+
+.summary-card p {
+
+    font-size: 30px;
+
+    font-weight: 800;
+
+}
+
+
+/* =========================================================
+   GENERAL CARD
+   ========================================================= */
+
+.card {
+
+    background:
+        var(--surface);
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        var(--radius);
+
+    padding:
+        25px;
+
+    margin-bottom:
+        25px;
+
+    box-shadow:
+        var(--shadow);
+
+}
+
+
+.card h2 {
+
+    font-size: 22px;
+
+    margin-bottom: 20px;
+
+}
+
+
+/* =========================================================
+   SECTION HEADER
+   ========================================================= */
+
+.section-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.section-header h2 {
+
+    margin-bottom: 0;
+
+}
+
+
+.section-header input {
+
+    padding:
+        10px 12px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        8px;
+
+    background:
+        var(--surface);
+
+    color:
+        var(--text);
+
+}
+
+
+/* =========================================================
+   MONTHLY GRID
+   ========================================================= */
+
+.monthly-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 15px;
+
+}
+
+
+.monthly-grid > div {
+
+    padding:
+        18px;
+
+    background:
+        #f8fafc;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        12px;
+
+}
+
+
+.monthly-grid span {
+
+    display: block;
+
+    color:
+        var(--muted);
+
+    font-size: 14px;
+
+    margin-bottom: 8px;
+
+}
+
+
+.monthly-grid strong {
+
+    font-size: 21px;
+
+}
+
+
+/* =========================================================
+   BUDGET
+   ========================================================= */
+
+.budget-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.budget-grid > div {
+
+    padding:
+        18px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        12px;
+
+    background:
+        #f8fafc;
+
+}
+
+
+.budget-grid span {
+
+    display: block;
+
+    color:
+        var(--muted);
+
+    margin-bottom: 7px;
+
+}
+
+
+.budget-grid strong {
+
+    font-size: 21px;
+
+}
+
+
+/* =========================================================
+   BUDGET PROGRESS
+   ========================================================= */
+
+.budget-progress {
+
+    width: 100%;
+
+    height: 14px;
+
+    background:
+        #e5e7eb;
+
+    border-radius:
+        50px;
+
+    overflow: hidden;
+
+}
+
+
+.budget-progress-bar {
+
+    height: 100%;
+
+    width: 0%;
+
+    background:
+        var(--primary);
+
+    border-radius:
+        50px;
+
+    transition:
+        width 0.3s ease;
+
+}
+
+
+.budget-percentage {
+
+    margin-top: 10px;
+
+    color:
+        var(--muted);
+
+}
+
+
+.budget-message {
+
+    margin-top: 8px;
+
+    font-weight: 600;
+
+}
+
+
+.budget-message.success {
+
+    color:
+        var(--success);
+
+}
+
+
+.budget-message.warning {
+
+    color:
+        var(--warning);
+
+}
+
+
+.budget-message.danger {
+
+    color:
+        var(--danger);
+
+}
+
+
+/* =========================================================
+   BUDGET FORM
+   ========================================================= */
+
+.budget-form {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 20px;
+
+}
+
+
+.budget-form input {
+
+    flex: 1;
+
+    padding:
+        12px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        9px;
+
+    background:
+        var(--surface);
+
+    color:
+        var(--text);
+
+}
+
+
+.budget-form button {
+
+    border: none;
+
+    padding:
+        12px 20px;
+
+    border-radius:
+        9px;
+
+    background:
+        var(--primary);
+
+    color:
+        white;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+
+/* =========================================================
+   CHARTS
+   ========================================================= */
+
+.charts-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 20px;
+
+}
+
+
+.chart-card {
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        12px;
+
+    padding:
+        20px;
+
+}
+
+
+.chart-card.full-width {
+
+    grid-column:
+        1 / -1;
+
+}
+
+
+.chart-card h3 {
+
+    margin-bottom:
+        15px;
+
+}
+
+
+.chart-container {
+
+    position: relative;
+
+    width: 100%;
+
+    min-height: 280px;
+
+}
+
+
+.chart-container canvas {
+
+    width: 100% !important;
+
+    max-height: 320px;
+
+}
+
+
+/* =========================================================
+   TRANSACTION FORM
+   ========================================================= */
+
+.form-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.form-group {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+.form-group label {
+
+    font-weight: 600;
+
+    margin-bottom: 7px;
+
+}
+
+
+.form-group input,
+.form-group select {
+
+    width: 100%;
+
+    padding:
+        13px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        9px;
+
+    background:
+        var(--surface);
+
+    color:
+        var(--text);
+
+    font-size: 15px;
+
+}
+
+
+.primary-button {
+
+    width: 100%;
+
+    padding:
+        14px;
+
+    border: none;
+
+    border-radius:
+        9px;
+
+    background:
+        var(--primary);
+
+    color:
+        white;
+
+    font-weight: 700;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+}
+
+
+.primary-button:hover {
+
+    background:
+        var(--primary-dark);
+
+}
+
+
+/* =========================================================
+   FILTERS
+   ========================================================= */
+
+.filters {
+
+    display: grid;
+
+    grid-template-columns:
+        2fr 1fr 1fr;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.filters input,
+.filters select {
+
+    padding:
+        12px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        9px;
+
+    background:
+        var(--surface);
+
+    color:
+        var(--text);
+
+}
+
+
+/* =========================================================
+   DOWNLOAD BILL
+   ========================================================= */
+
+.download-container {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.download-select {
+
+    flex: 1;
+
+    padding:
+        12px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        9px;
+
+    background:
+        var(--surface);
+
+    color:
+        var(--text);
+
+}
+
+
+.download-button {
+
+    padding:
+        12px 20px;
+
+    border: none;
+
+    border-radius:
+        9px;
+
+    background:
+        var(--primary);
+
+    color:
+        white;
+
+    font-weight:
+        700;
+
+    cursor:
+        pointer;
+
+}
+
+
+.download-button:hover {
+
+    background:
+        var(--primary-dark);
+
+}
+
+
+/* =========================================================
+   TRANSACTION LIST
+   ========================================================= */
+
+#transactionList {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+}
+
+
+.transaction-item {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding:
+        16px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        12px;
+
+    background:
+        var(--surface);
+
+}
+
+
+.transaction-details {
+
+    flex: 1;
+
+}
+
+
+.transaction-details h4 {
+
+    margin-bottom:
+        5px;
+
+}
+
+
+.transaction-details p {
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+
+}
+
+
+.transaction-amount {
+
+    font-weight:
+        800;
+
+    font-size:
+        18px;
+
+}
+
+
+.transaction-amount.income {
+
+    color:
+        var(--success);
+
+}
+
+
+.transaction-amount.expense {
+
+    color:
+        var(--danger);
+
+}
+
+
+/* =========================================================
+   PROFILE POPUP
+   IMPORTANT:
+   HIDDEN BY DEFAULT
+   ========================================================= */
+
+.profile-popup {
+
+    position:
+        fixed;
+
+    inset:
+        0;
+
+    display:
+        none;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        20px;
+
+    background:
+        rgba(0, 0, 0, 0.55);
+
+    z-index:
+        1000;
+
+}
+
+
+.profile-popup.show {
+
+    display:
+        flex;
+
+}
+
+
+.profile-popup-card {
+
+    position:
+        relative;
+
+    width:
+        100%;
+
+    max-width:
+        480px;
+
+    max-height:
+        90vh;
+
+    overflow-y:
+        auto;
+
+    background:
+        var(--surface);
+
+    border-radius:
+        20px;
+
+    padding:
+        30px;
+
+    box-shadow:
+        0 25px 70px
+        rgba(0, 0, 0, 0.3);
+
+}
+
+
+.close-profile {
+
+    position:
+        absolute;
+
+    top:
+        12px;
+
+    right:
+        15px;
+
+    width:
+        36px;
+
+    height:
+        36px;
+
+    border:
+        none;
+
+    border-radius:
+        50%;
+
+    background:
+        #e5e7eb;
+
+    color:
+        #111827;
+
+    font-size:
+        25px;
+
+    cursor:
+        pointer;
+
+}
+
+
+.profile-popup-icon {
+
+    width:
+        75px;
+
+    height:
+        75px;
+
+    margin:
+        0 auto 15px;
+
+    border-radius:
+        50%;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    background:
+        #334155;
+
+    font-size:
+        38px;
+
+}
+
+
+.profile-popup-card h2 {
+
+    text-align:
+        center;
+
+    margin-bottom:
+        22px;
+
+}
+
+
+/* =========================================================
+   PROFILE INFO
+   ========================================================= */
+
+.profile-info {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        10px;
+
+}
+
+
+.profile-info-row {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    gap:
+        15px;
+
+    padding:
+        12px 0;
+
+    border-bottom:
+        1px solid var(--border);
+
+}
+
+
+.profile-info-row span {
+
+    color:
+        var(--muted);
+
+}
+
+
+.profile-info-row strong {
+
+    text-align:
+        right;
+
+    word-break:
+        break-word;
+
+}
+
+
+/* =========================================================
+   PROFILE BUTTONS
+   ========================================================= */
+
+.edit-profile-button {
+
+    width:
+        100%;
+
+    padding:
+        12px;
+
+    margin-top:
+        10px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        9px;
+
+    background:
+        var(--surface);
+
+    color:
+        var(--text);
+
+    font-weight:
+        700;
+
+    cursor:
+        pointer;
+
+}
+
+
+.edit-profile-button:hover {
+
+    background:
+        #f1f5f9;
+
+}
+
+
+.logout-button {
+
+    border-color:
+        #fecaca;
+
+    background:
+        #fef2f2;
+
+    color:
+        var(--danger);
+
+}
+
+
+.logout-button:hover {
+
+    background:
+        #fee2e2;
+
+}
+
+
+.profile-account-actions {
+
+    margin-top:
+        15px;
+
+}
+
+
+/* =========================================================
+   SECURITY MODAL
+   IMPORTANT:
+   THIS MUST BE HIDDEN AT START
+   ========================================================= */
+
+.security-modal {
+
+    position:
+        fixed;
+
+    inset:
+        0;
+
+    display:
+        none;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        20px;
+
+    background:
+        rgba(0, 0, 0, 0.55);
+
+    z-index:
+        2000;
+
+}
+
+
+.security-modal.show {
+
+    display:
+        flex;
+
+}
+
+
+.security-modal-card {
+
+    position:
+        relative;
+
+    width:
+        100%;
+
+    max-width:
+        430px;
+
+    max-height:
+        90vh;
+
+    overflow-y:
+        auto;
+
+    padding:
+        30px;
+
+    border-radius:
+        18px;
+
+    background:
+        var(--surface);
+
+    color:
+        var(--text);
+
+    box-shadow:
+        0 25px 70px
+        rgba(0, 0, 0, 0.3);
+
+    animation:
+        securityModalIn 0.2s ease;
+
+}
+
+
+@keyframes securityModalIn {
+
+    from {
+
+        opacity:
+            0;
+
+        transform:
+            scale(0.95);
+
+    }
+
+    to {
+
+        opacity:
+            1;
+
+        transform:
+            scale(1);
+
+    }
+
+}
+
+
+.security-modal-card h2 {
+
+    text-align:
+        center;
+
+    margin-bottom:
+        10px;
+
+}
+
+
+.security-modal-card > p {
+
+    margin-bottom:
+        22px;
+
+}
+
+
+/* =========================================================
+   FORGOT PASSWORD
+   ========================================================= */
+
+.forgot-password-button {
+
+    width:
+        100%;
+
+    border:
+        none;
+
+    background:
+        transparent;
+
+    color:
+        var(--primary);
+
+    margin-top:
+        12px;
+
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
+    cursor:
+        pointer;
+
+}
+
+
+.forgot-password-button:hover {
+
+    text-decoration:
+        underline;
+
+}
+
+
+/* =========================================================
+   ACCOUNT LIST
+   ========================================================= */
+
+.account-list {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        10px;
+
+    margin-bottom:
+        15px;
+
+    max-height:
+        350px;
+
+    overflow-y:
+        auto;
+
+}
+
+
+.account-list-item {
+
+    width:
+        100%;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        flex-start;
+
+    gap:
+        5px;
+
+    padding:
+        14px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        10px;
+
+    background:
+        var(--surface);
+
+    color:
+        var(--text);
+
+    cursor:
+        pointer;
+
+    text-align:
+        left;
+
+}
+
+
+.account-list-item:hover {
+
+    border-color:
+        var(--primary);
+
+    background:
+        #eff6ff;
+
+}
+
+
+.account-list-item strong {
+
+    font-size:
+        16px;
+
+}
+
+
+.account-list-item span {
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+
+}
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+.toast {
+
+    position:
+        fixed;
+
+    bottom:
+        25px;
+
+    right:
+        25px;
+
+    min-width:
+        250px;
+
+    max-width:
+        350px;
+
+    padding:
+        14px 18px;
+
+    border-radius:
+        10px;
+
+    background:
+        #1f2937;
+
+    color:
+        white;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0, 0, 0, 0.2);
+
+    z-index:
+        5000;
+
+}
+
+
+.toast.success {
+
+    background:
+        var(--success);
+
+}
+
+
+.toast.error {
+
+    background:
+        var(--danger);
+
+}
+
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+body.dark-mode {
+
+    --background:
+        #0f172a;
+
+    --surface:
+        #111827;
+
+    --text:
+        #f8fafc;
+
+    --muted:
+        #94a3b8;
+
+    --border:
+        #334155;
+
+}
+
+
+body.dark-mode .profile-page {
+
+    background:
+        linear-gradient(
+            135deg,
+            #0f172a,
+            #111827
+        );
+
+}
+
+
+body.dark-mode .profile-card {
+
+    background:
+        #111827;
+
+}
+
+
+body.dark-mode .profile-field input,
+body.dark-mode .profile-field select {
+
+    background:
+        #0f172a;
+
+    color:
+        #f8fafc;
+
+    border-color:
+        #334155;
+
+}
+
+
+body.dark-mode .monthly-grid > div,
+body.dark-mode .budget-grid > div {
+
+    background:
+        #0f172a;
+
+}
+
+
+body.dark-mode .edit-profile-button {
+
+    background:
+        #111827;
+
+    color:
+        #f8fafc;
+
+}
+
+
+body.dark-mode .edit-profile-button:hover {
+
+    background:
+        #1e293b;
+
+}
+
+
+body.dark-mode .security-modal-card {
+
+    background:
+        #111827;
+
+    color:
+        #f8fafc;
+
+}
+
+
+body.dark-mode .security-modal-card > p {
+
+    color:
+        #94a3b8;
+
+}
+
+
+body.dark-mode .account-list-item {
+
+    background:
+        #111827;
+
+    color:
+        #f8fafc;
+
+}
+
+
+body.dark-mode .account-list-item:hover {
+
+    background:
+        #1e293b;
+
+}
+
+
+body.dark-mode .close-profile {
+
+    background:
+        #334155;
+
+    color:
+        #f8fafc;
+
+}
+
+
+/* =========================================================
+   MOBILE RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .summary-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .monthly-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+    .budget-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .charts-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .chart-card.full-width {
+
+        grid-column:
+            auto;
+
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .header {
+
+        padding:
+            20px;
+
+        align-items:
+            flex-start;
+
+    }
+
+
+    .header h1 {
+
+        font-size:
+            25px;
+
+    }
+
+
+    .header p {
+
+        font-size:
+            15px;
+
+    }
+
+
+    .header-actions {
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .theme-toggle {
+
+        padding:
+            9px 12px;
+
+        font-size:
+            13px;
+
+    }
+
+
+    .profile-button {
+
+        width:
+            48px;
+
+        height:
+            48px;
+
+        font-size:
+            24px;
+
+    }
+
+
+    .form-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .filters {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .download-container {
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .download-button {
+
+        width:
+            100%;
+
+    }
+
+
+    .section-header {
+
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+
+    }
+
+
+    .monthly-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .profile-card {
+
+        padding:
+            25px 20px;
+
+    }
+
+
+    .profile-popup-card,
+    .security-modal-card {
+
+        padding:
+            25px 20px;
+
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .container {
+
+        padding:
+            20px 12px 40px;
+
+    }
+
+
+    .card {
+
+        padding:
+            18px;
+
+    }
+
+
+    .summary-card {
+
+        padding:
+            18px;
+
+    }
+
+
+    .summary-card p {
+
+        font-size:
+            25px;
+
+    }
+
+
+    .header {
+
+        gap:
+            10px;
+
+    }
+
+
+    .header h1 {
+
+        font-size:
+            21px;
+
+    }
+
+
+    .profile-icon {
+
+        width:
+            75px;
+
+        height:
+            75px;
+
+        font-size:
+            40px;
+
+    }
+
+}
